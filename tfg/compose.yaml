@@ -1,18 +1,17 @@
+version: '3.8'  # Versión de Docker Compose
+
 services:
-  mysql:
-    image: 'mysql:latest'
+  postgres:  # Nombre del servicio
+    image: postgres:alpine  # Imagen de PostgreSQL
+    container_name: postgres_db  # Nombre del contenedor
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      POSTGRES_USER: pingu  # Usuario de la base de datos
+      POSTGRES_PASSWORD: miausita25  # Contraseña del usuario
+      POSTGRES_DB: minecraft_project # Nombre de la base de datos
     ports:
-      - '3306'
-  postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
-    ports:
-      - '5432'
+      - "5433:5432"  # Mapeo de puertos (host:contenedor)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Volumen para persistir datos
+
+volumes:
+  postgres_data:  # Define un volumen para persistir los datos de PostgreSQL
