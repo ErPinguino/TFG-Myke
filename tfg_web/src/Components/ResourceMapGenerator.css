@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.minecraft-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Press Start 2P', cursive;
+  color: #ffffff;
+  height: 100%;
+}
+.minecraft-title {
+  text-align: center;
+  font-size: 2em;
+  text-shadow: 2px 2px #000000;
+  margin-bottom: 40px;
+  background: linear-gradient(#866043, #5C4332);
+  padding: 20px;
+  border: 6px solid #3B2616;
+  border-radius: 4px;
+  position: relative;
+  color: #FFE6C0;
+  box-shadow: 
+    inset 0 0 0 2px rgba(255,255,255,0.1),
+    0 4px 8px rgba(0,0,0,0.3);
+}
+
+.input-container {
+  background: linear-gradient(45deg, #866043, #5C4332);
+  border: 6px solid #3B2616;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 
+    inset 0 0 0 2px rgba(255,255,255,0.1),
+    0 4px 8px rgba(0,0,0,0.3);
+  border-radius: 4px;
+}
+
+.input-field {
+  margin-bottom: 15px;
+}
+
+.input-field label {
+  display: inline-block;
+  background: linear-gradient(#5C4332, #3B2616);
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  border: 3px solid #2A1810;
+  border-radius: 4px;
+  color: #FFE6C0;
+  text-shadow: 2px 2px #000000;
+}
+
+.minecraft-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  background: #4C4C4C;
+  border: 2px solid #8b6244;
+  color: white;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8em;
+}
+
+.minecraft-button {
+  background: #5c7c1f;
+  border: 3px solid #3c5015;
+  padding: 15px 30px;
+  color: white;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1em;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto;
+  transition: background 0.2s;
+}
+
+.minecraft-button:hover {
+  background: #7baa2d;
+}
+
+.map-container {
+  background: #000000;
+  border: 4px solid #8b6244;
+  height: 500px;
+  margin: 20px 0;
+}
+
+.minecraft-map {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666666;
+}
+
+.coordinates-list {
+  background: linear-gradient(45deg, #866043, #5C4332);
+  border: 6px solid #3B2616;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 
+    inset 0 0 0 2px rgba(255,255,255,0.1),
+    0 4px 8px rgba(0,0,0,0.3);
+}
+
+.coordinates-list h3 {
+  margin-top: 0;
+  color: #FFE6C0;
+  text-shadow: 2px 2px #000000;
+  background: linear-gradient(#5C4332, #3B2616);
+  padding: 10px;
+  border: 3px solid #2A1810;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.coordinates-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.coordinates-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #8b6244;
+  font-size: 0.8em;
+}

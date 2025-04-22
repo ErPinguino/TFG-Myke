@@ -1,0 +1,13 @@
+Crea una interfaz estilo página web inspirada en Minecraft, específicamente para una herramienta llamada "Generador de Mapa de Recursos". El diseño debe tener una estética tipo pixel art, con colores terrosos (verde, marrón, azul) y tipografía pixelada. La interfaz debe incluir:
+
+    Un título grande en la parte superior: “Minecraft Resource Map Generator”.
+
+    Dos campos de entrada: uno para ingresar la seed del mundo y otro para seleccionar el recurso (ej: mena de diamante).
+
+    Un botón grande de "Generar Mapa".
+
+    Un mapa interactivo debajo que muestra biomas y recursos (representados con íconos pixelados, por ejemplo, diamantes).
+
+    Una lista con las ubicaciones de los recursos encontrados (coordenadas).
+
+Todo debe tener un look retro, como si fuera parte del mismo universo visual de Minecraft. Estilo de botones y recuadros de madera pixelada, fondo con bloques del paisaje de Minecraft, y sin sobrecargar demasiado el diseño.
