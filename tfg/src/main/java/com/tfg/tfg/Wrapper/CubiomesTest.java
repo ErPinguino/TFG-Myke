@@ -1,41 +1,52 @@
 package com.tfg.tfg.Wrapper;
 
 public class CubiomesTest {
-    // Mapa de IDs de biomas a nombres
-    private static String getBiomeName(int biomeId) {
-        switch (biomeId) {
-            case 1: return "Plains";
-            case 2: return "Desert";
-            case 3: return "Mountains";
-            case 4: return "Forest";
-            case 5: return "Taiga";
-            case 25: return "Snowy Plains";
-            // ... añadir más biomas según necesites
-            default: return "Unknown Biome (" + biomeId + ")";
-        }
-    }
-
     public static void main(String[] args) {
         try {
-            System.out.println("Library path: " + System.getProperty("user.dir"));
-            
             CubiomesWrapper wrapper = new CubiomesWrapper();
             wrapper.initialize();
-            wrapper.setupSeed(12345L, 19); // Para MC 1.19
+            wrapper.setupSeed(12345L, 19); // MC 1.19
             
-            // Buscar aldea más cercana
-            int[] villageCoords = wrapper.findStructure(CubiomesWrapper.VILLAGE, 0, 0, 1000);
-            System.out.printf("Aldea más cercana en: X=%d, Z=%d%n", 
-                villageCoords[0], villageCoords[1]);
+            // Definir las estructuras a buscar
+            int[] structureTypes = {
+                CubiomesWrapper.MANSION,
+                CubiomesWrapper.STRONGHOLD,
+                CubiomesWrapper.END_PORTAL,
+                CubiomesWrapper.MONUMENT,
+                CubiomesWrapper.VILLAGE,
+                CubiomesWrapper.FORTRESS,
+                CubiomesWrapper.END_CITY,
+                CubiomesWrapper.BASTION
+            };
             
-            // Obtener bioma en esas coordenadas
-            int biomeId = wrapper.getBiomeAt(villageCoords[0], 64, villageCoords[1]);
-            System.out.printf("Bioma en la aldea: %s (ID: %d)%n", 
-                getBiomeName(biomeId), biomeId);
+            String[] structureNames = {
+                "Mansión",
+                "Stronghold",
+                "Portal del End",
+                "Monumento",
+                "Aldea",
+                "Fortaleza del Nether",
+                "Ciudad del End",
+                "Bastión"
+            };
             
-        } catch (UnsatisfiedLinkError e) {
-            System.err.println("Error loading native library: " + e.getMessage());
-            e.printStackTrace();
+            // Radio de búsqueda en bloques
+            int searchRadius = 2000;
+            
+            System.out.println("Buscando estructuras en un radio de " + searchRadius + " bloques...\n");
+            
+            for(int i = 0; i < structureTypes.length; i++) {
+                int[] coords = wrapper.findStructure(structureTypes[i], 0, 0, searchRadius);
+                
+                if(coords != null) {
+                    System.out.printf("%s encontrada en: X=%d, Z=%d%n", 
+                        structureNames[i], coords[0], coords[1]);
+                } else {
+                    System.out.printf("%s no encontrada en el radio de %d bloques%n", 
+                        structureNames[i], searchRadius);
+                }
+            }
+            
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
