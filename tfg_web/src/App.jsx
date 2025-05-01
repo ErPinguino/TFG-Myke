@@ -1,11 +1,11 @@
 import React from 'react';
-import ResourceMapGenerator from './components/ResourceMapGenerator';
+import StructureSearch from './components/StructureSearch/StructureSearch';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <ResourceMapGenerator />
+      <StructureSearch />
     </div>
   );
 }

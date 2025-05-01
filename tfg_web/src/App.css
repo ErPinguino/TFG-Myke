@@ -1,7 +1,7 @@
 .App {
   min-height: 100vh;
   margin: 0;
-  padding: 0;
+  padding: 20px;
   background: url('./assets/fondo.jpg') repeat;
   background-size: cover;
   background-position: center;
@@ -11,4 +11,9 @@
   justify-content: center;
   width: 100%;
   overflow-x: hidden;
+}
+
+.App > * {
+  width: 100%;
+  max-width: 1800px;
 }
