@@ -5,103 +5,81 @@ import CoordinatesList from '../CoordinatesList/CoordinatesList';
 import { structureService } from '../Services/Services';
 import './StructureSearch.css';
 
-const StructureSearch = () => {
+export default function StructureSearch() {
   const [seed, setSeed] = useState('');
-  const [selectedStructure, setSelectedStructure] = useState('');
-  const [availableStructures, setAvailableStructures] = useState({});
-  const [coordinates, setCoordinates] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [structureName, setStructureName] = useState('');
+  const [x, setX] = useState('');
+  const [z, setZ] = useState('');
+  const [radius, setRadius] = useState('');
+  const [count, setCount] = useState('5');
+  const [availableStructures, setAvailableStructures] = useState([]);
+  const [loadingTypes, setLoadingTypes] = useState(true);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [coordinates, setCoordinates] = useState([]);
   const [error, setError] = useState(null);
 
-  // Cargar estructuras disponibles al montar el componente
   useEffect(() => {
-    loadAvailableStructures();
+    structureService.getAvailableStructures()
+        .then(types => setAvailableStructures(types))
+        .catch(() => console.warn('No pude cargar tipos'))
+        .finally(() => setLoadingTypes(false));
   }, []);
 
-  const loadAvailableStructures = async () => {
-    try {
-      const structures = await structureService.getAvailableStructures();
-      setAvailableStructures(structures);
-    } catch (err) {
-      setError('Error loading available structures');
-    }
-  };
-
-  
   const handleGenerate = async () => {
-    if (!seed || !selectedStructure) {
-      setError('Please enter a seed and select a structure');
+    if (!seed || !structureName || !x || !z || !radius) {
+      setError('Introduce seed, estructura, coordenadas X/Z y radio');
       return;
     }
+    setError(null);
+    setSearchLoading(true);
 
     try {
-      setLoading(true);
-      setError(null);
-      
-      const searchData = {
-        structureName: selectedStructure,
-        seed: parseInt(seed),
-        x: 0,
-        z: 0,
-        radius: 2000
+      const input = {
+        seed: seed.trim(),         // ahora STRING
+        structureName,
+        x: Number(x),
+        z: Number(z),
+        radius: Number(radius),
+        count: Number(count)
       };
-
-      const response = await structureService.findStructure(searchData);
-      console.log('Response from server:', response); // Debug log
-      
-      if (response.success) {
-        // Convert single coordinate to array format
-        const coordArray = [{
-          x: response.coordinates.x,
-          z: response.coordinates.z
-        }];
-        setCoordinates(coordArray);
-        setError(null);
+      const res = await structureService.findStructures(input);
+      if (res.found) {
+        setCoordinates(res.coordinates);
       } else {
-        setError(response.message);
-        setCoordinates(null);
+        setError(res.message);
+        setCoordinates([]);
       }
-    } catch (err) {
-      console.error('Error in handleGenerate:', err); // Debug log
-      setError(err.message || 'Error finding structure');
-      setCoordinates(null);
+    } catch (e) {
+      setError(e.toString());
+      setCoordinates([]);
     } finally {
-      setLoading(false);
+      setSearchLoading(false);
     }
   };
 
-  return (
-    <div className="minecraft-container">
-      <h1 className="minecraft-title">Minecraft Structure Finder</h1>
-      
-      {error && (
-        <div className="error-message">{error}</div>
-      )}
+  if (loadingTypes) return <div className="loading">Cargando tipos…</div>;
 
-      <SearchForm 
-        seed={seed}
-        setSeed={setSeed}
-        selectedStructure={selectedStructure}
-        setSelectedStructure={setSelectedStructure}
-        structures={availableStructures}
-        onGenerate={handleGenerate}
-        disabled={loading}
-      />
-      
-      {loading ? (
-        <div className="loading">Searching structures...</div>
-      ) : (
-        <>
-          {coordinates && coordinates.length > 0 && (
+  return (
+      <div className="minecraft-container">
+        <h1 className="minecraft-title">Structure Finder</h1>
+        {error && <div className="error-message">{error}</div>}
+        <SearchForm
+            seed={seed} setSeed={setSeed}
+            x={x} setX={setX}
+            z={z} setZ={setZ}
+            radius={radius} setRadius={setRadius}
+            count={count} setCount={setCount}
+            option={structureName} setOption={setStructureName}
+            options={availableStructures} label="Structure"
+            onGenerate={handleGenerate} disabled={searchLoading}
+        />
+        {searchLoading && <div className="loading">Buscando…</div>}
+        {!searchLoading && coordinates.length > 0 && (
             <>
               <MinecraftMap coordinates={coordinates} />
               <CoordinatesList coordinates={coordinates} />
             </>
-          )}
-        </>
-      )}
-    </div>
+        )}
+      </div>
   );
-};
-
-export default StructureSearch;
+}

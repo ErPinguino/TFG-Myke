@@ -1,26 +1,25 @@
 package com.tfg.tfg.DTOs;
 
-import com.tfg.tfg.Entities.Biome;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
 public class BiomeOutPutDTO {
-    private Long id;
-    private String name;
-    private List<ResourceLocationOutPutDTO> resourceLocations; // Usa ResourceLocationOutPutDTO
-
-    public static BiomeOutPutDTO fromEntity(Biome biome) {
-        return BiomeOutPutDTO.builder()
-                .id(biome.getId())
-                .name(biome.getName())
-                .resourceLocations(biome.getLocations().stream()
-                        .map(ResourceLocationOutPutDTO::fromEntity) // Mapea a ResourceLocationOutPutDTO
-                        .collect(Collectors.toList()))
-                .build();
-    }
+    /**
+     * Si encontró o no el bioma
+     */
+    private boolean found;
+    /**
+     * Mensaje descriptivo ("Bioma encontrado", "Bioma no válido", etc.)
+     */
+    private String message;
+    /**
+     * Coordenada X del primer match (null si not found)
+     */
+    private Integer x;
+    /**
+     * Coordenada Z del primer match (null si not found)
+     */
+    private Integer z;
 }
