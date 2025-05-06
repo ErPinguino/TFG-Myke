@@ -23,33 +23,36 @@ public class StructureFinderService {
     private final Cubiomes cubiomes;
 
     public StructureFinderService() {
-        // Usamos la misma versión que en VillageRadarClient
         this.cubiomes = new Cubiomes(MCVersion.MC_1_21);
     }
 
-    /**
-     * Convierte coordenada de bloque a coordenada de región (en chunks).
-     */
     private int blockToRegionCoord(double blockCoord, int regionSize) {
         return (int) Math.floor(blockCoord / 16.0 / regionSize);
     }
 
-    /**
-     * Busca hasta `count` estructuras de tipo `structureName`, dentro de
-     * `radius` bloques alrededor de (x,z).
-     */
     public StructureListOutputDTO findStructures(StructureSearchInputDTO input) {
         log.info("→ findStructures seed='{}', x={}, z={}, radiusBlocks={}, count={}, type='{}'",
                 input.getSeed(), input.getX(), input.getZ(),
                 input.getRadius(), input.getCount(), input.getStructureName());
 
-        // 1) Normalizamos el nombre al enum
-        String normalized = java.util.Arrays.stream(input.getStructureName().split("[ _]+"))
-                .map(w -> w.substring(0,1).toUpperCase() + w.substring(1).toLowerCase())
-                .collect(java.util.stream.Collectors.joining());
+        // 1) Parsear la seed
+        long seed;
+        try {
+            seed = Long.parseLong(input.getSeed().trim());
+        } catch (NumberFormatException e) {
+            log.warn("Seed inválida: {}", input.getSeed());
+            return StructureListOutputDTO.builder()
+                    .found(false)
+                    .message("Invalid seed: " + input.getSeed())
+                    .coordinates(List.of())
+                    .build();
+        }
+        cubiomes.applySeed(Dimension.DIM_OVERWORLD, seed);
+
+        // 2) Mapeo directo del nombre al enum
         StructureType type;
         try {
-            type = StructureType.valueOf(normalized);
+            type = StructureType.valueOf(input.getStructureName());
         } catch (IllegalArgumentException e) {
             log.warn("Type not available: {}", input.getStructureName());
             return StructureListOutputDTO.builder()
@@ -59,17 +62,11 @@ public class StructureFinderService {
                     .build();
         }
 
-        // 2) Aplicar seed
-        long seed = Long.parseLong(input.getSeed());
-        cubiomes.applySeed(Dimension.DIM_OVERWORLD, seed);
-
-        // 3) Tamaño de región EN CHUNKS según tipo
-        //    Estos valores vienen del wrapper original :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}
+        // 3) Determinar regionSize según el tipo
         int regionSize = switch (type) {
-            case Village      -> 34;
-            case Ruined_Portal-> 40;
-            // Añade aquí más casos si quieres afinar spacing de otros tipos
-            default           -> 32;
+            case Village        -> 34;
+            case Ruined_Portal  -> 40;
+            default             -> 32;
         };
         log.info("  regionSizeChunks={} for type={}", regionSize, type);
 
@@ -79,7 +76,7 @@ public class StructureFinderService {
         int centerRegZ = blockToRegionCoord(z, regionSize);
         log.info("  centerRegion = ({}, {})", centerRegX, centerRegZ);
 
-        // 5) Convertir radius de bloques a número de regiones
+        // 5) Conversión de radio de bloques a regiones
         int regionRadius = input.getRadius() > 0
                 ? (int) Math.ceil(input.getRadius() / (16.0 * regionSize))
                 : 0;
@@ -89,44 +86,44 @@ public class StructureFinderService {
         int targetCount = Math.max(1, input.getCount());
         log.info("  targetCount={}", targetCount);
 
-        // 6) Función que prueba una región y filtra via cubiomes.isViable
+        // 6) Función para probar viabilidad en cada región
         BiFunction<Integer,Integer,Optional<Pos>> probe = (rx, rz) -> {
-            Pos pos = cubiomes.getStructurePos(type, seed, rx, rz);
-            boolean viable = cubiomes.isViableStructurePos(type, pos.x(), pos.z());
+            Pos p = cubiomes.getStructurePos(type, seed, rx, rz);
+            boolean viable = cubiomes.isViableStructurePos(type, p.x(), p.z());
             log.debug("    probe region ({}, {}): pos=({}, {}), viable={}",
-                    rx, rz, pos.x(), pos.z(), viable);
-            return viable ? Optional.of(pos) : Optional.empty();
+                    rx, rz, p.x(), p.z(), viable);
+            return viable ? Optional.of(p) : Optional.empty();
         };
 
-        // 7) Recogemos coordenadas
+        // 7) Recolectar coordenadas
         List<Coordinate> coords = new ArrayList<>();
-        // 7.1) Región central
         probe.apply(centerRegX, centerRegZ)
                 .ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
 
-        // 7.2) Espiral alrededor
         for (int d = 1; d <= regionRadius && coords.size() < targetCount; d++) {
-            // muros norte/sur
             for (int dx = -d; dx <= d && coords.size() < targetCount; dx++) {
-                probe.apply(centerRegX + dx, centerRegZ - d).ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
-                probe.apply(centerRegX + dx, centerRegZ + d).ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
+                probe.apply(centerRegX + dx, centerRegZ - d)
+                        .ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
+                probe.apply(centerRegX + dx, centerRegZ + d)
+                        .ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
             }
-            // muros este/oeste
-            for (int dz = -(d - 1); dz <= (d - 1) && coords.size() < targetCount; dz++) {
-                probe.apply(centerRegX - d, centerRegZ + dz).ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
-                probe.apply(centerRegX + d, centerRegZ + dz).ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
+            for (int dz = -(d - 1); dz <= d - 1 && coords.size() < targetCount; dz++) {
+                probe.apply(centerRegX - d, centerRegZ + dz)
+                        .ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
+                probe.apply(centerRegX + d, centerRegZ + dz)
+                        .ifPresent(p -> coords.add(new Coordinate(p.x(), p.z())));
             }
         }
 
         boolean found = !coords.isEmpty();
-        String msg = found
-                ? "Found " + coords.size() + " " + normalized
+        String message = found
+                ? "Found " + coords.size() + " " + input.getStructureName()
                 : "No structures found";
 
         log.info("← found {} structures of type {}", coords.size(), type);
         return StructureListOutputDTO.builder()
                 .found(found)
-                .message(msg)
+                .message(message)
                 .coordinates(coords)
                 .build();
     }
