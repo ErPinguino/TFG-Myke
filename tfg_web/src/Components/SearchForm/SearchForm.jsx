@@ -1,3 +1,4 @@
+// src/Components/SearchForm/SearchForm.jsx
 import React from 'react';
 import './SearchForm.css';
 
@@ -8,7 +9,8 @@ export default function SearchForm({
                                        radius, setRadius,
                                        count, setCount,
                                        option, setOption,
-                                       options, label,
+                                       options = [],   // por defecto un array vacío
+                                       label,
                                        onGenerate, disabled
                                    }) {
     return (
@@ -29,10 +31,15 @@ export default function SearchForm({
                     onChange={e => setOption(e.target.value)}
                     className="minecraft-input"
                 >
-                    <option value="" disabled>Elige {label.toLowerCase()}…</option>
-                    {options.map(o => (
-                        <option key={o} value={o}>{o.replace(/_/g,' ')}</option>
-                    ))}
+                    <option value="" disabled>Choose {label.toLowerCase()}…</option>
+                    { Array.isArray(options)
+                        ? options.map(o => (
+                            <option key={o} value={o}>
+                                {o.replace(/_/g, ' ')}
+                            </option>
+                        ))
+                        : null
+                    }
                 </select>
             </div>
             <div className="input-field">
@@ -81,3 +88,4 @@ export default function SearchForm({
         </div>
     );
 }
+

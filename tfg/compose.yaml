@@ -1,17 +1,33 @@
-version: '3.8'  # Versión de Docker Compose
 
 services:
-  postgres:  # Nombre del servicio
-    image: postgres:alpine  # Imagen de PostgreSQL
-    container_name: postgres_db  # Nombre del contenedor
+  postgres:
+    image: postgres:alpine
+    container_name: postgres_db
     environment:
-      POSTGRES_USER: pingu  # Usuario de la base de datos
-      POSTGRES_PASSWORD: miausita25  # Contraseña del usuario
-      POSTGRES_DB: minecraft_project # Nombre de la base de datos
+      POSTGRES_USER:     pingu
+      POSTGRES_PASSWORD: miausita25
+      POSTGRES_DB:       minecraft_project
     ports:
-      - "5433:5432"  # Mapeo de puertos (host:contenedor)
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Volumen para persistir datos
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      # si tu Dockerfile no se llama simplemente "Dockerfile":
+      # dockerfile: Dockerfile
+    container_name: tfg_backend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL:      jdbc:postgresql://postgres:5432/minecraft_project
+      SPRING_DATASOURCE_USERNAME: pingu
+      SPRING_DATASOURCE_PASSWORD: miausita25
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL:           "true"
 
 volumes:
-  postgres_data:  # Define un volumen para persistir los datos de PostgreSQL
+  postgres_data:

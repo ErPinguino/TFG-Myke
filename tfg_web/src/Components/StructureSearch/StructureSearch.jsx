@@ -1,7 +1,8 @@
+// src/Components/StructureSearch/StructureSearch.jsx
 import React, { useState, useEffect } from 'react';
 import SearchForm from '../SearchForm/SearchForm';
-import MinecraftMap from '../MinecraftMap/MinecraftMap';
 import CoordinatesList from '../CoordinatesList/CoordinatesList';
+import BlueMapViewer from '../BlueMapViewer/BlueMapViewer';
 import { structureService } from '../Services/Services';
 import './StructureSearch.css';
 
@@ -34,14 +35,7 @@ export default function StructureSearch() {
     setSearchLoading(true);
 
     try {
-      const input = {
-        seed: seed.trim(),         // ahora STRING
-        structureName,
-        x: Number(x),
-        z: Number(z),
-        radius: Number(radius),
-        count: Number(count)
-      };
+      const input = { seed: seed.trim(), structureName, x: Number(x), z: Number(z), radius: Number(radius), count: Number(count) };
       const res = await structureService.findStructures(input);
       if (res.found) {
         setCoordinates(res.coordinates);
@@ -60,26 +54,31 @@ export default function StructureSearch() {
   if (loadingTypes) return <div className="loading">Cargando tipos…</div>;
 
   return (
-      <div className="minecraft-container">
-        <h1 className="minecraft-title">Structure Finder</h1>
-        {error && <div className="error-message">{error}</div>}
-        <SearchForm
-            seed={seed} setSeed={setSeed}
-            x={x} setX={setX}
-            z={z} setZ={setZ}
-            radius={radius} setRadius={setRadius}
-            count={count} setCount={setCount}
-            option={structureName} setOption={setStructureName}
-            options={availableStructures} label="Structure"
-            onGenerate={handleGenerate} disabled={searchLoading}
-        />
-        {searchLoading && <div className="loading">Buscando…</div>}
-        {!searchLoading && coordinates.length > 0 && (
-            <>
-              <MinecraftMap coordinates={coordinates} />
+      <div className="viewer-container">
+        {/* PANEL IZQUIERDO: Formulario + lista de coords */}
+        <div className="minecraft-container">
+          <h1 className="minecraft-title">Structure Finder</h1>
+          {error && <div className="error-message">{error}</div>}
+          <SearchForm
+              seed={seed} setSeed={setSeed}
+              x={x} setX={setX}
+              z={z} setZ={setZ}
+              radius={radius} setRadius={setRadius}
+              count={count} setCount={setCount}
+              option={structureName} setOption={setStructureName}
+              options={availableStructures} label="Structure"
+              onGenerate={handleGenerate} disabled={searchLoading}
+          />
+          {searchLoading && <div className="loading">Buscando…</div>}
+          {!searchLoading && coordinates.length > 0 && (
               <CoordinatesList coordinates={coordinates} />
-            </>
-        )}
+          )}
+        </div>
+
+        {/* PANEL DERECHO: ÚNICO visor de BlueMap */}
+        <div className="bluemap-wrapper">
+          <BlueMapViewer />
+        </div>
       </div>
   );
 }

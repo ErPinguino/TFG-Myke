@@ -1,18 +1,21 @@
+/* index.css */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body, html {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
+html, body {
   width: 100%;
+  min-height: 100vh;
+  /* repite el oak_planks.png que tienes en public/ */
+  background: url('M:\TFG-Myke\tfg_web\public\oak_planks.jpg') repeat;
+  image-rendering: pixelated;
+  font-family: 'Press Start 2P', cursive;
   overflow-x: hidden;
 }
 
 #root {
-  min-height: 100vh;
   width: 100%;
+  min-height: 100vh;
 }

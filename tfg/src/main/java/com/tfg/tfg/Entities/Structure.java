@@ -34,7 +34,5 @@ public class Structure {
     @JoinColumn(name = "seed_id")
     private Seed seed;         // Seed donde se encontró
     
-    @ManyToOne
-    @JoinColumn(name = "biome_id")
-    private Biome biome;       // Bioma donde está la estructura
+       // Bioma donde está la estructura
 }

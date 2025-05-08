@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +19,15 @@ public class Seed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String seed_value;
 
-    @OneToMany(mappedBy = "seed", cascade = CascadeType.ALL)
-    private List<ResourceLocation> resourceLocationList = new ArrayList<>();
+    LocalDateTime created_at;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+
 
 }

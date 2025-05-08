@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SeedRepository extends JpaRepository<Seed, Long> {
     List<Seed> findByUserId(Long userId);
+
 }

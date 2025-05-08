@@ -1,16 +1,13 @@
+/* App.css */
 .App {
   min-height: 100vh;
   margin: 0;
   padding: 20px;
-  background: url('./assets/fondo.jpg') repeat;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  image-rendering: pixelated; /* Maintains the pixel art style if the image is pixelated */
+  /* quitamos el fondo anterior, ya lo gestiona index.css */
+  background: transparent;
   display: flex;
   justify-content: center;
   width: 100%;
-  overflow-x: hidden;
 }
 
 .App > * {

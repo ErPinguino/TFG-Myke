@@ -1,128 +1,127 @@
-/* Aplicar box-sizing global para controlar mejor anchos con padding */
-* {
-  box-sizing: border-box;
+/* StructureSearch.css */
+
+/* -------------------------------------------------- */
+/* 1) Contenedor flex que alinea y estira ambos paneles */
+/* -------------------------------------------------- */
+.viewer-container {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;       /* estira ambos hijos a la misma altura */
+  max-width: 1000px;
+  margin: 2rem auto;
 }
 
+/* -------------------------------------------------- */
+/* 2) Ambos hijos ocupan el mismo espacio relativo    */
+/* -------------------------------------------------- */
+.minecraft-container,
+.bluemap-wrapper {
+  flex: 1;
+}
+
+/* -------------------------------------------------- */
+/* 3) Estilos del panel de búsqueda (madera clara)    */
+/* -------------------------------------------------- */
 .minecraft-container {
-  max-width: 1800px; /* Aumentado aún más si lo deseas */
-  margin: 0 auto;
-  padding: 20px;
+  background: #C2A377;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  padding: 1rem;
 }
 
 .minecraft-title {
   text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
   color: #2c1810;
-  font-family: 'Minecraft', sans-serif;
-  margin-bottom: 30px;
-  padding: 25px;
-  background: 
-    linear-gradient(90deg, 
-      #825432 0%, 
-      #9b6b45 45%, 
-      #825432 55%,
-      #9b6b45 100%
-    );
-  border: 4px solid #2c1810;
-  border-radius: 4px;
-  text-shadow: 2px 2px rgba(0,0,0,0.3);
-  box-shadow: 
-    inset 0 2px rgba(255,255,255,0.2),
-    inset 0 -3px rgba(0,0,0,0.3),
-    inset 2px 0 rgba(255,255,255,0.1),
-    inset -2px 0 rgba(0,0,0,0.2);
+  background: rgba(199,162,108,0.9);
+  border: 4px solid #000;
+  padding: 0.5rem;
 }
 
+/* -------------------------------------------------- */
+/* 4) Estilos de los bloques internos                 */
+/* -------------------------------------------------- */
 .input-container,
 .map-container,
 .coordinates-list {
-  background: 
-    linear-gradient(90deg, 
-      #825432 0%, 
-      #9b6b45 45%, 
-      #825432 55%,
-      #9b6b45 100%
-    );
-  border: 4px solid #2c1810;
-  border-radius: 4px;
-  padding: 30px;
-  margin: 30px 0;
-  box-shadow: 
-    inset 0 2px rgba(255,255,255,0.2),
-    inset 0 -3px rgba(0,0,0,0.3),
-    inset 2px 0 rgba(255,255,255,0.1),
-    inset -2px 0 rgba(0,0,0,0.2);
-  width: 100%; /* Añadido para usar todo el ancho disponible */
+  background: rgba(199,162,108,0.9);
+  border: 4px solid #000;
+  border-radius: 2px;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.3);
+  width: 100%;
 }
 
+/* -------------------------------------------------- */
+/* 5) Inputs y botón estilo Minecraft                 */
+/* -------------------------------------------------- */
 .minecraft-input {
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 2px solid #5c3c24;
-  color: white;
-  padding: 12px;
-  font-family: 'Minecraft', sans-serif;
-  margin: 8px 0;
-  width: 100%; /* Hacer que el input use todo el ancho disponible */
-  max-width: 600px; /* Limitar el tamaño máximo si se desea */
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: #fff;
+  border: 2px solid #000;
+  font-family: inherit;
+  font-size: 0.8rem;
 }
 
 .minecraft-button {
-  background: linear-gradient(#9b6b45, #825432);
-  border: 2px solid #2c1810;
-  color: #2c1810;
-  padding: 15px 30px;
-  font-family: 'Minecraft', sans-serif;
+  background: #8d5d39;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 0.75rem 1.5rem;
+  font-family: inherit;
+  font-size: 0.8rem;
   cursor: pointer;
-  text-shadow: 1px 1px rgba(255,255,255,0.2);
-  box-shadow: 
-    inset 0 1px rgba(255,255,255,0.2),
-    inset 0 -2px rgba(0,0,0,0.3);
-  margin: 15px 0;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  margin-top: 1rem;
 }
-
 .minecraft-button:hover {
-  background: linear-gradient(#a6724d, #8d5d39);
+  background: #a6724d;
 }
-
 .minecraft-button:active {
-  background: linear-gradient(#825432, #724626);
+  transform: translate(2px,2px);
+  box-shadow: none;
 }
 
 label {
-  color: #3d2912;
-  font-family: 'Minecraft', sans-serif;
-  text-shadow: 1px 1px rgba(255,255,255,0.3);
-  margin-right: 10px;
-  font-weight: bold;
-}
-
-.input-field {
-  margin: 20px 0;
-}
-
-
-
-.error-message {
-  width: 100%;
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 15px;
-  background: linear-gradient(#8B0000, #660000);
-  border: 4px solid #2c1810;
-  border-radius: 4px;
-  color: white;
-  text-align: center;
-  font-family: 'Minecraft', sans-serif;
-}
-
-.loading {
-  width: 100%;
-  max-width: 1000px;
-  margin: 30px auto;
-  padding: 20px;
-  text-align: center;
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.8rem;
   color: #2c1810;
-  font-family: 'Minecraft', sans-serif;
-  background: linear-gradient(90deg, #825432 0%, #9b6b45 45%, #825432 55%, #9b6b45 100%);
-  border: 4px solid #2c1810;
-  border-radius: 4px;
+}
+
+/* -------------------------------------------------- */
+/* 6) Mensajes de error / loading                     */
+/* -------------------------------------------------- */
+.error-message,
+.loading {
+  background: rgba(139,0,0,0.9);
+  border: 4px solid #000;
+  color: #fff;
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.8rem;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  margin: 1rem 0;
+}
+
+/* -------------------------------------------------- */
+/* 7) Estilos del visor BlueMap                       */
+/* -------------------------------------------------- */
+.bluemap-wrapper {
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  background: #000; /* fondo negro para recorte */
+}
+
+.bluemap-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }

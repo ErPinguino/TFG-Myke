@@ -1,29 +1,21 @@
-/* Elimina o comenta los estilos duplicados */
-/* .coordinates-list {
-  margin: 20px;
-  padding: 20px;
-  background-color: #c6c6c6;
-  border: 2px solid #373737;
-  border-radius: 4px;
-} */
-
+/* CoordinatesList.css */
 .coordinates-list h3 {
   margin-top: 0;
-  color: #373737;
-  font-family: 'Minecraft', sans-serif;
+  font-size: 1rem;
+  color: #2c1810;
 }
 
 .coordinates-list ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
-  width: 100%;
 }
 
 .coordinates-list li {
-  padding: 10px;
-  margin: 8px 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  border: 2px solid #2c1810;
-  color: white;
-  width: 100%;
+  background: rgba(0,0,0,0.7);
+  border: 2px solid #000;
+  color: #fff;
+  padding: .5rem;
+  margin: .5rem 0;
+  font-size: .8rem;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.3);
 }

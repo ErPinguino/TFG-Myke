@@ -1,59 +1,44 @@
+// src/main/java/com/tfg/tfg/Service/SeedService.java
 package com.tfg.tfg.Services;
 
 import com.tfg.tfg.Entities.Seed;
+import com.tfg.tfg.Entities.User;
 import com.tfg.tfg.Repository.SeedRepository;
+import com.tfg.tfg.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SeedService {
+    @Autowired private SeedRepository seeds;
+    @Autowired private UserRepository users;
 
-    private final SeedRepository seedRepository;
-
-    @Autowired
-    public SeedService(SeedRepository seedRepository) {
-        this.seedRepository = seedRepository;
+    /** Lista todas las semillas de un usuario */
+    public List<Seed> findByUser(Long userId) {
+        return seeds.findByUserId(userId);
     }
 
-    // Crear un nuevo Seed
-    public Seed createSeed(Seed seed) {
-        return seedRepository.save(seed);
+    /** Añade una nueva semilla para el usuario */
+    public Seed save(Long userId, String seedValue) {
+        User u = users.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no existe"));
+        Seed s = Seed.builder()
+                .seed_value(seedValue)
+                .created_at(LocalDateTime.now())
+                .user(u)
+                .build();
+        return seeds.save(s);
     }
 
-    // Obtener todos los Seed
-    public List<Seed> getAllSeeds() {
-        return seedRepository.findAll();
-    }
-
-    // Obtener un Seed por su ID
-    public Optional<Seed> getSeedById(Long id) {
-        return seedRepository.findById(id);
-    }
-
-    // Actualizar un Seed existente
-    public Seed updateSeed(Long id, Seed seedDetails) {
-        Optional<Seed> optionalSeed = seedRepository.findById(id);
-        if (optionalSeed.isPresent()) {
-            Seed existingSeed = optionalSeed.get();
-            existingSeed.setSeed_value(seedDetails.getSeed_value());
-            existingSeed.setResourceLocationList(seedDetails.getResourceLocationList());
-            existingSeed.setUser(seedDetails.getUser());
-            return seedRepository.save(existingSeed);
-        } else {
-            throw new RuntimeException("Seed not found with id " + id);
+    /** Elimina una semilla si pertenece al usuario */
+    public void delete(Long userId, Long seedId) {
+        Seed s = seeds.findById(seedId)
+                .orElseThrow(() -> new IllegalArgumentException("Seed no encontrada"));
+        if (!s.getUser().getId().equals(userId)) {
+            throw new SecurityException("No puedes eliminar esta semilla");
         }
-    }
-
-    // Eliminar un Seed por su ID
-    public void deleteSeed(Long id) {
-        seedRepository.deleteById(id);
-    }
-
-    // Obtener todos los Seed asociados a un User
-    public List<Seed> getSeedsByUser(Long userId) {
-        return seedRepository.findByUserId(userId);
+        seeds.delete(s);
     }
 }
