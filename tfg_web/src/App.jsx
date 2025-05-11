@@ -1,17 +1,26 @@
+// src/App.jsx
 import React, { useContext } from 'react';
-import { AuthContext } from './Contexts/AuthContext';
-import AuthForm from './Components/Auth/AuthForm';
-import StructureSearch from './Components/StructureSearch/StructureSearch';
+import { AuthProvider } from './Contexts/AuthProvider';
+import { AuthContext }  from './Contexts/AuthContext';
+import AuthForm         from './Components/Auth/AuthForm';
+import StructureSearch  from './Components/StructureSearch/StructureSearch';
 
-export default function App() {
+function Main() {
     const { isAuthenticated, isGuest } = useContext(AuthContext);
 
-    // si no ha hecho login ni invitado → AuthForm
+    // Si ni logueado ni guest, muestro form de login/registro
     if (!isAuthenticated && !isGuest) {
         return <AuthForm />;
     }
 
-    // si ha entrado (login o invitado) → buscador + mapa
+    // Si es invitado o está autenticado, paso al buscador
     return <StructureSearch />;
 }
 
+export default function App() {
+    return (
+        <AuthProvider>
+            <Main />
+        </AuthProvider>
+    );
+}

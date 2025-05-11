@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/minecraftProject/structures")
-@CrossOrigin(origins = "*")
 public class StructureController {
 
     private final StructureFinderService finderService;

@@ -1,28 +1,44 @@
 import axios from 'axios';
+
 axios.defaults.withCredentials = true;
 
-const authApi      = axios.create({ baseURL: 'http://localhost:8081/minecraftProject/auth' });
-const seedsApi     = axios.create({ baseURL: 'http://localhost:8081/minecraftProject/seeds' });
-const structureApi = axios.create({ baseURL: 'http://localhost:8081/minecraftProject/structures' });
+
+const BASE_URL = '/minecraftProject';
+
+const authApi      = axios.create({ baseURL: `${BASE_URL}/auth`, withCredentials: true });
+const seedsApi     = axios.create({ baseURL: `${BASE_URL}/seeds`, withCredentials: true });
+const structureApi = axios.create({ baseURL: `${BASE_URL}/structures`, withCredentials: true });
 
 export const authService = {
     register: ({ username, password }) =>
-        authApi.post('/register', { username, password }),
+        authApi.post('/register', { username, password })
+            .then(res => res.data),
 
     login: async ({ username, password }) => {
         const res = await authApi.post('/login', { username, password });
-        // el back devuelve { message: "Login exitoso" } ó { message: "Credenciales inválidas" }
         return res.data.message;
     },
+
+    logout: () =>
+        authApi.post('/logout'),
 };
 
 export const seedService = {
-    list: ()   => seedsApi.get('/').then(r => r.data),
-    add: s     => seedsApi.post('/', { seed_value: s }).then(r => r.data),
-    remove: id => seedsApi.delete(`/${id}`),
+    list: () =>
+        seedsApi.get('/').then(res => res.data),
+
+    add: seedValue =>
+        seedsApi.post('/', { seed_value: seedValue })
+            .then(res => res.data),
+
+    remove: id =>
+        seedsApi.delete(`/${id}`),
 };
 
 export const structureService = {
-    getAvailableStructures: () => structureApi.get('/types').then(r => r.data),
-    findStructures: input       => structureApi.post('/search', input).then(r => r.data),
+    getAvailableStructures: () =>
+        structureApi.get('/types').then(res => res.data),
+
+    findStructures: input =>
+        structureApi.post('/search', input).then(res => res.data),
 };

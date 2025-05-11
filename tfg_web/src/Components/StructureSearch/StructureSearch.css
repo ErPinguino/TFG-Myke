@@ -1,127 +1,82 @@
 /* StructureSearch.css */
 
-/* -------------------------------------------------- */
-/* 1) Contenedor flex que alinea y estira ambos paneles */
-/* -------------------------------------------------- */
-.viewer-container {
-  display: flex;
-  gap: 1rem;
-  align-items: stretch;       /* estira ambos hijos a la misma altura */
-  max-width: 1000px;
-  margin: 2rem auto;
-}
-
-/* -------------------------------------------------- */
-/* 2) Ambos hijos ocupan el mismo espacio relativo    */
-/* -------------------------------------------------- */
-.minecraft-container,
-.bluemap-wrapper {
-  flex: 1;
-}
-
-/* -------------------------------------------------- */
-/* 3) Estilos del panel de búsqueda (madera clara)    */
-/* -------------------------------------------------- */
-.minecraft-container {
-  background: #C2A377;
-  border: 4px solid #000;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
-  padding: 1rem;
-}
-
-.minecraft-title {
-  text-align: center;
+/* ─────────── Botón de Cerrar sesión ─────────── */
+.auth-controls {
+  text-align: right;
   margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #2c1810;
-  background: rgba(199,162,108,0.9);
-  border: 4px solid #000;
-  padding: 0.5rem;
 }
-
-/* -------------------------------------------------- */
-/* 4) Estilos de los bloques internos                 */
-/* -------------------------------------------------- */
-.input-container,
-.map-container,
-.coordinates-list {
-  background: rgba(199,162,108,0.9);
-  border: 4px solid #000;
-  border-radius: 2px;
-  padding: 1rem;
-  margin: 1.5rem 0;
-  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.3);
-  width: 100%;
-}
-
-/* -------------------------------------------------- */
-/* 5) Inputs y botón estilo Minecraft                 */
-/* -------------------------------------------------- */
-.minecraft-input {
-  display: block;
-  width: 100%;
-  max-width: 600px;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: #fff;
-  border: 2px solid #000;
-  font-family: inherit;
-  font-size: 0.8rem;
-}
-
-.minecraft-button {
+.auth-controls button {
   background: #8d5d39;
   color: #fff;
   border: 2px solid #000;
-  padding: 0.75rem 1.5rem;
-  font-family: inherit;
-  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
+  font-size: 0.9rem;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-  margin-top: 1rem;
 }
-.minecraft-button:hover {
+.auth-controls button:hover {
   background: #a6724d;
 }
-.minecraft-button:active {
+.auth-controls button:active {
   transform: translate(2px,2px);
   box-shadow: none;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.8rem;
-  color: #2c1810;
+/* ─────────── Controles de seeds ─────────── */
+.seed-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
-
-/* -------------------------------------------------- */
-/* 6) Mensajes de error / loading                     */
-/* -------------------------------------------------- */
-.error-message,
-.loading {
-  background: rgba(139,0,0,0.9);
-  border: 4px solid #000;
+.seed-controls button {
+  background: #8d5d39;
   color: #fff;
-  padding: 0.75rem;
-  text-align: center;
-  font-size: 0.8rem;
+  border: 2px solid #000;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-  margin: 1rem 0;
+}
+.seed-controls button:hover {
+  background: #a6724d;
+}
+.seed-controls button:active {
+  transform: translate(2px,2px);
+  box-shadow: none;
 }
 
-/* -------------------------------------------------- */
-/* 7) Estilos del visor BlueMap                       */
-/* -------------------------------------------------- */
-.bluemap-wrapper {
-  border: 4px solid #000;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
-  background: #000; /* fondo negro para recorte */
+/* ─────────── Lista de seeds ─────────── */
+.seed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  border: 2px solid #000;
+  background: rgba(199,162,108,0.9);
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.3);
 }
-
-.bluemap-wrapper iframe {
-  width: 100%;
-  height: 100%;
+.seed-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #000;
+}
+.seed-list li:last-child {
+  border-bottom: none;
+}
+.seed-item {
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: underline;
+}
+.seed-delete {
+  background: transparent;
   border: none;
-  display: block;
+  cursor: pointer;
+  color: #2c1810;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.seed-delete:hover {
+  color: #f00;
 }
