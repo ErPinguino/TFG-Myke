@@ -5,10 +5,24 @@
   border: 2px solid #000;
 }
 
-.minecraft-input {
-  /* usa los estilos de StructureSearch.css, aquí sobran overrides */
-}
+/* SearchForm.css (o Buttons.css) */
 
 .minecraft-button {
-  /* idem, hereda de StructureSearch.css */
+  background: #8d5d39;
+  color: #fff;
+  border: 2px solid #000;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.minecraft-button:hover {
+  background: #a6724d;
+}
+
+.minecraft-button:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
