@@ -1,5 +1,12 @@
 /* StructureSearch.css */
 
+
+.minecraft-container {
+  max-width: 1800px;    /* ajusta el ancho máximo a tu gusto */
+  margin: 0 auto;       /* centra horizontalmente */
+  padding: 1rem;        /* algo de espacio interior */
+}
+
 /* ─────────── Botón de Cerrar sesión ─────────── */
 .auth-controls {
   text-align: right;

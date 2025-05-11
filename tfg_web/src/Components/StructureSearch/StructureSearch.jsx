@@ -1,13 +1,13 @@
 // src/Components/StructureSearch/StructureSearch.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import SearchForm from '../SearchForm/SearchForm';
-import CoordinatesList from '../CoordinatesList/CoordinatesList';
+import SearchForm        from '../SearchForm/SearchForm';
+import CoordinatesList   from '../CoordinatesList/CoordinatesList';
+import BlueMapViewer     from '../BlueMapViewer/BlueMapViewer';
 import { structureService, seedService } from '../Services/Services';
-import { AuthContext } from '../../Contexts/AuthContext';
+import { AuthContext }   from '../../Contexts/AuthContext';
 import './StructureSearch.css';
 
 export default function StructureSearch() {
-  // — auth context
   const { isAuthenticated, isGuest, logout } = useContext(AuthContext);
 
   const [seed, setSeed]                   = useState('');
@@ -22,16 +22,14 @@ export default function StructureSearch() {
   const [coordinates, setCoordinates]     = useState([]);
   const [error, setError]                 = useState(null);
 
-  const [seeds, setSeeds]           = useState([]);
-  const [showSeeds, setShowSeeds]   = useState(false);
+  const [seeds, setSeeds]         = useState([]);
+  const [showSeeds, setShowSeeds] = useState(false);
 
-  // limpia seeds cuando cambia el usuario (login/logout o invitado)
   useEffect(() => {
     setSeeds([]);
     setShowSeeds(false);
   }, [isAuthenticated, isGuest]);
 
-  // carga de estructuras
   useEffect(() => {
     structureService.getAvailableStructures()
         .then(setAvailableStructures)
@@ -39,7 +37,6 @@ export default function StructureSearch() {
         .finally(() => setLoadingTypes(false));
   }, []);
 
-  // 1) Generar búsqueda de estructuras
   const handleGenerate = async () => {
     if (!seed || !structureName || !x || !z || !radius) {
       setError('Introduce seed, estructura, coordenadas X/Z y radio');
@@ -71,7 +68,6 @@ export default function StructureSearch() {
     }
   };
 
-  // 2) Guardar seed en BD (solo usuarios logueados)
   const handleSaveSeed = async () => {
     if (!seed) return;
     try {
@@ -83,7 +79,6 @@ export default function StructureSearch() {
     }
   };
 
-  // 3) Mostrar / ocultar seeds y cargarlas al mostrar (solo usuarios logueados)
   const toggleShowSeeds = async () => {
     if (!showSeeds) {
       try {
@@ -96,7 +91,6 @@ export default function StructureSearch() {
     setShowSeeds(v => !v);
   };
 
-  // 4) Borrar seed
   const handleDeleteSeed = async id => {
     try {
       await seedService.remove(id);
@@ -110,8 +104,6 @@ export default function StructureSearch() {
 
   return (
       <div className="minecraft-container">
-
-        {/* ─────────── Logout ─────────── */}
         {(isAuthenticated || isGuest) && (
             <div className="auth-controls">
               <button onClick={logout}>Cerrar sesión</button>
@@ -121,7 +113,6 @@ export default function StructureSearch() {
         <h1 className="minecraft-title">Structure Finder</h1>
         {error && <div className="error-message">{error}</div>}
 
-        {/* ─────────── Controles de seeds (solo auth) ─────────── */}
         {isAuthenticated && (
             <div className="seed-controls">
               <button onClick={handleSaveSeed}>Guardar seed</button>
@@ -131,7 +122,6 @@ export default function StructureSearch() {
             </div>
         )}
 
-        {/* ─────────── Lista de seeds ─────────── */}
         {isAuthenticated && showSeeds && (
             <ul className="seed-list">
               {seeds.length > 0 ? seeds.map(s => (
@@ -145,9 +135,7 @@ export default function StructureSearch() {
                     <button
                         className="seed-delete"
                         onClick={() => handleDeleteSeed(s.id)}
-                    >
-                      ✕
-                    </button>
+                    >✕</button>
                   </li>
               )) : (
                   <li style={{ padding: '.5rem', fontStyle: 'italic' }}>
@@ -157,7 +145,6 @@ export default function StructureSearch() {
             </ul>
         )}
 
-        {/* ─────────── Form de búsqueda ─────────── */}
         <SearchForm
             seed={seed} setSeed={setSeed}
             x={x} setX={setX}
@@ -171,11 +158,14 @@ export default function StructureSearch() {
 
         {searchLoading && <div className="loading">Buscando…</div>}
 
-        {/* ─────────── Mapa y lista de coordenadas ─────────── */}
         {!searchLoading && coordinates.length > 0 && (
             <CoordinatesList coordinates={coordinates} />
         )}
 
+        {/* ─────────── BlueMap Viewer SIEMPRE VISIBLE ─────────── */}
+        <div className="bluemap-wrapper">
+          <BlueMapViewer />
+        </div>
       </div>
   );
 }

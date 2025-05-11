@@ -1,4 +1,10 @@
 /* SearchForm.css */
+
+.search-form {
+  margin: 0 auto 2rem;  /* centra y separa de lo que venga abajo */
+  max-width: 800px;      /* opcional: ancho máximo para el formulario */
+  padding: 0 1rem;       /* espacio a derecha e izquierda */
+}
 .input-field {
   background: rgba(199, 162, 108, 0.9);
   padding: 1rem;
