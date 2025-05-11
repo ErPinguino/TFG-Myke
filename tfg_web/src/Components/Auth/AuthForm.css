@@ -1,0 +1,112 @@
+/* src/Components/Auth/AuthForm.css */
+
+.auth-form {
+    max-width: 360px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: #C2A377;            /* madera clara */
+    border: 4px solid #000;         /* borde grueso negro */
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.auth-form h2 {
+    margin: 0;
+    padding: 0.5rem;
+    background: rgba(199, 162, 108, 0.9);
+    border: 4px solid #000;
+    text-align: center;
+    color: #2c1810;
+    font-size: 1.25rem;
+}
+
+.auth-form input {
+    padding: 0.5rem;
+    border: 2px solid #000;
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: #fff;
+}
+
+.auth-form button {
+    padding: 0.75rem;
+    background: #8d5d39;
+    color: #fff;
+    border: 2px solid #000;
+    font-family: inherit;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.auth-form button:hover {
+    background: #a6724d;
+}
+
+.auth-error, .auth-message {
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    border: 2px solid #000;
+    background: rgba(199, 0, 0, 0.9);
+    color: #fff;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.auth-message {
+    background: rgba(0, 100, 0, 0.9);
+}
+.auth-choose {
+    background: #C2A377;   /* madera clara */
+    border: 4px solid #000;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 3rem auto;
+}
+.auth-choose h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+.auth-choose button {
+    background: #8d5d39;
+    color: #fff;
+    border: 2px solid #000;
+    padding: .75rem 1.5rem;
+    font-family: inherit;
+    font-size: .8rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 250px;
+}
+.auth-choose button:hover {
+    background: #a6724d;
+}
+.auth-choose button:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+.auth-panel {
+    max-width: 400px;
+    margin: 2rem auto;
+    position: relative;
+}
+.back-btn {
+    position: absolute;
+    top: -2rem;
+    left: 0;
+    background: none;
+    border: none;
+    font-size: .8rem;
+    cursor: pointer;
+    color: #2c1810;
+}
+
