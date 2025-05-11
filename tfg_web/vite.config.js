@@ -4,7 +4,6 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname  = path.dirname(__filename)
 
@@ -15,10 +14,10 @@ export default defineConfig({
       pfx: fs.readFileSync(path.resolve(__dirname, 'keystore.p12')),
       passphrase: 'miPasswordSeguro'
     },
-    port: 5175,
+    port: 5176,   // coincide con https://localhost:5176
     proxy: {
       '/minecraftProject': {
-        target: 'https://localhost:8443',
+        target: 'http://localhost:8081',  // ← cambia a HTTP:8081
         changeOrigin: true,
         secure: false,
 
@@ -26,7 +25,7 @@ export default defineConfig({
         cookieDomainRewrite: '',   // elimina el Domain=backend
         cookiePathRewrite:   '/',  // fuerza Path=/
 
-        // 2) además, por si quieres asegurarte de SameSite/Secure:
+        // 2) por si quieres reforzar SameSite/Secure en las cookies:
         configure: proxy => {
           proxy.on('proxyRes', (proxyRes, req, res) => {
             const setCookie = proxyRes.headers['set-cookie']
