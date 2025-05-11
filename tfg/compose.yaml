@@ -20,7 +20,6 @@ services:
     container_name: tfg_backend
     ports:
       - "8081:8081"
-      - "8443:8443"
     depends_on:
       - postgres
     environment:

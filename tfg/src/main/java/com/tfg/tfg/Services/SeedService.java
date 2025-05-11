@@ -22,19 +22,23 @@ public class SeedService {
 
     /** Añade una nueva semilla para el usuario */
     public Seed save(Long userId, String seedValue) {
-        User u = users.findById(userId).orElseThrow();
-        Seed s = new Seed();
-        s.setSeed_value(seedValue);
-        s.setUser(u);
-        s.setCreated_at(LocalDateTime.now());
+        User u = users.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no existe"));
+        Seed s = Seed.builder()
+                .seed_value(seedValue)
+                .created_at(LocalDateTime.now())
+                .user(u)
+                .build();
         return seeds.save(s);
     }
 
     /** Elimina una semilla si pertenece al usuario */
     public void delete(Long userId, Long seedId) {
         Seed s = seeds.findById(seedId)
-                .filter(seed -> seed.getUser().getId().equals(userId))
-                .orElseThrow(() -> new RuntimeException("Not found or not yours"));
+                .orElseThrow(() -> new IllegalArgumentException("Seed no encontrada"));
+        if (!s.getUser().getId().equals(userId)) {
+            throw new SecurityException("No puedes eliminar esta semilla");
+        }
         seeds.delete(s);
     }
 }
