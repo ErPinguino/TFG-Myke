@@ -21,13 +21,19 @@ public class SeedService {
     }
 
     /** Añade una nueva semilla para el usuario */
-    public Seed save(Long userId, String seedValue) {
+    public Seed save(Long userId, String seedValue, String name) {
         User u = users.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no existe"));
+
+        String alias = (name != null && !name.isBlank())
+                ? name
+                : seedValue;
+
         Seed s = Seed.builder()
                 .seed_value(seedValue)
                 .created_at(LocalDateTime.now())
                 .user(u)
+                .name(alias)
                 .build();
         return seeds.save(s);
     }
@@ -41,4 +47,5 @@ public class SeedService {
         }
         seeds.delete(s);
     }
+
 }

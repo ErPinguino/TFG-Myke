@@ -22,6 +22,8 @@ public class Seed {
 
     private String seed_value;
 
+    private String name;
+
     LocalDateTime created_at;
 
     @ManyToOne

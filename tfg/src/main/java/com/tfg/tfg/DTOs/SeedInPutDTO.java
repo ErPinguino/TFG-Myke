@@ -11,6 +11,6 @@ public class SeedInPutDTO {
 
     private String seed_value;
 
-
+    private String name;
 
 }

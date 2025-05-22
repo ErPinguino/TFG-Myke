@@ -14,6 +14,8 @@ public class SeedOutPutDTO {
 
     private String seed_value;
 
+    private String name;
+
 
 
 }

@@ -64,7 +64,11 @@ public class SeedController {
         }
 
         Long userId = userService.findByName(auth.getName()).getId();
-        Seed saved = seedService.save(userId, input.getSeed_value());
+        String name = input.getName();
+        if (name == null || name.isEmpty()) {
+            name = input.getName();
+        }
+        Seed saved = seedService.save(userId, input.getSeed_value(), name);
         return ResponseEntity
                 .status(201)
                 .body(toDto(saved));
@@ -94,6 +98,7 @@ public class SeedController {
         return SeedOutPutDTO.builder()
                 .id(s.getId())
                 .seed_value(s.getSeed_value())
+                .name(s.getName())
                 .build();
     }
 }

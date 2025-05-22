@@ -73,8 +73,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,  "/minecraftProject/structures/types").permitAll()
                         .requestMatchers(HttpMethod.POST, "/minecraftProject/structures/search").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/minecraftProject/tiles").permitAll()
+
                         // Seeds protegidos
                         .requestMatchers("/minecraftProject/seeds/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET, "/minecraftProject/world/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/minecraftProject/world/**").permitAll()
 
                         // Resto → 403
                         .anyRequest().denyAll()
