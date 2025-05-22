@@ -1,31 +1,53 @@
+// src/Components/Auth/RegisterForm.jsx
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../../Contexts/AuthContext';
+import { AuthContext } from '../../Contexts/AuthContext.js';
 import './AuthForm.css';
 
-export default function RegisterForm() {
+export default function RegisterForm({ onNotify }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError]       = useState('');
-    const { register }            = useContext(AuthContext);
+    const { register, setShowRegisterForm } = useContext(AuthContext);
 
     const handleSubmit = async e => {
         e.preventDefault();
-        setError('');
-        const ok = await register({ username, password });
-        if (!ok) {
-            setError('Falló el registro');
+        try {
+            const ok = await register({ username, password });
+            if (ok) {
+                onNotify({ message: '¡Registro exitoso! Ya puedes iniciar sesión.', type: 'success' });
+                // Tras un par de segundos, volvemos al formulario de login
+                setTimeout(() => {
+                    setShowRegisterForm(false);
+                }, 2000);
+            } else {
+                onNotify({ message: 'Falló el registro. Inténtalo de nuevo.', type: 'error' });
+            }
+        } catch (err) {
+            onNotify({ message: 'Error al registrar: ' + err.message, type: 'error' });
         }
-        // si ok=true, volverá automáticamente a la pantalla de login
     };
 
     return (
         <form className="auth-form" onSubmit={handleSubmit}>
-            {error && <div className="error">{error}</div>}
             <label>Usuario</label>
-            <input value={username} onChange={e => setUsername(e.target.value)} required />
+            <input
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                required
+                className="minecraft-input"
+            />
+
             <label>Contraseña</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-            <button type="submit">Registrarme</button>
+            <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                className="minecraft-input"
+            />
+
+            <button type="submit" className="minecraft-button">
+                Registrarme
+            </button>
         </form>
     );
 }

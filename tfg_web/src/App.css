@@ -1,16 +1,28 @@
-/* App.css */
+/* src/App.css */
 .App {
+  position: relative;
+  overflow: hidden;
   min-height: 100vh;
-  margin: 0;
-  padding: 20px;
-  /* quitamos el fondo anterior, ya lo gestiona index.css */
-  background: transparent;
+  width: 100%;
   display: flex;
   justify-content: center;
-  width: 100%;
+  padding: 20px;
+  background: transparent;
 }
 
-.App > * {
+.App > *:not(.background-video) {
   width: 100%;
   max-width: 1800px;
+  z-index: 1;
+}
+
+
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;   /* el vídeo detrás de todo */
 }

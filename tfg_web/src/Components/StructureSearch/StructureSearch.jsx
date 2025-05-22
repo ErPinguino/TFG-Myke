@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import SearchForm        from '../SearchForm/SearchForm';
 import CoordinatesList   from '../CoordinatesList/CoordinatesList';
-import BlueMapViewer     from '../BlueMapViewer/BlueMapViewer';
 import { structureService, seedService } from '../Services/Services';
 import { AuthContext }   from '../../Contexts/AuthContext';
 import './StructureSearch.css';
@@ -25,11 +24,13 @@ export default function StructureSearch() {
   const [seeds, setSeeds]         = useState([]);
   const [showSeeds, setShowSeeds] = useState(false);
 
+  // limpiar seeds al cambiar usuario/invitado
   useEffect(() => {
     setSeeds([]);
     setShowSeeds(false);
   }, [isAuthenticated, isGuest]);
 
+  // cargar tipos de estructuras
   useEffect(() => {
     structureService.getAvailableStructures()
         .then(setAvailableStructures)
@@ -70,8 +71,12 @@ export default function StructureSearch() {
 
   const handleSaveSeed = async () => {
     if (!seed) return;
+    let name = window.prompt('¿Quieres ponerle un nombre a esta seed?', '');
+    if (name === null) return; // canceló
+    name = name.trim() === '' ? seed : name.trim();
+
     try {
-      const saved = await seedService.add(seed);
+      const saved = await seedService.add({ seedValue: seed, name });
       setSeeds(prev => [...prev, saved]);
       if (!showSeeds) setShowSeeds(true);
     } catch (e) {
@@ -130,7 +135,8 @@ export default function StructureSearch() {
                   className="seed-item"
                   onClick={() => setSeed(s.seed_value)}
               >
-                {s.seed_value}
+                { /* Si s.name existe y no es cadena vacía lo mostramos, si no, s.seed_value */ }
+                {s.name && s.name.trim() !== '' ? s.name : s.seed_value}
               </span>
                     <button
                         className="seed-delete"
@@ -161,11 +167,6 @@ export default function StructureSearch() {
         {!searchLoading && coordinates.length > 0 && (
             <CoordinatesList coordinates={coordinates} />
         )}
-
-        {/* ─────────── BlueMap Viewer SIEMPRE VISIBLE ─────────── */}
-        <div className="bluemap-wrapper">
-          <BlueMapViewer />
-        </div>
       </div>
   );
 }

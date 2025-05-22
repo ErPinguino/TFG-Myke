@@ -1,0 +1,26 @@
+/* src/Components/Shared/Notification.css */
+.notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+}
+.notification--success { background: #4caf50; }
+.notification--error   { background: #f44336; }
+.notification--info    { background: #2196f3; }
+
+.notification__close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    margin-left: 1rem;
+    cursor: pointer;
+}

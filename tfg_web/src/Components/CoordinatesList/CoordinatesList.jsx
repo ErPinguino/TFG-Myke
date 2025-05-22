@@ -5,14 +5,14 @@ const CoordinatesList = ({ coordinates }) => {
   if (!coordinates || !Array.isArray(coordinates) || coordinates.length === 0) {
     return (
       <div className="coordinates-list">
-        <h3>Found Biome Coordinates:</h3>
-        <p>No biome found</p>
+        <h3>Found structure Coordinates:</h3>
+        <p>No structure found</p>
       </div>
     );
   }
   return (
     <div className="coordinates-list">
-      <h3>Found Biome Coordinates:</h3>
+      <h3>Found structure Coordinates:</h3>
       <ul>
         {coordinates.map((coord, index) => (
           <li key={index}>
