@@ -1,4 +1,3 @@
-// src/Components/SearchForm/SearchForm.jsx
 import React from 'react';
 import './SearchForm.css';
 
@@ -9,9 +8,10 @@ export default function SearchForm({
                                        radius, setRadius,
                                        count, setCount,
                                        option, setOption,
-                                       options = [],   // por defecto un array vacío
+                                       options = [],
                                        label,
-                                       onGenerate, disabled
+                                       onGenerate,
+                                       disabled
                                    }) {
     return (
         <div className="input-container">
@@ -24,6 +24,7 @@ export default function SearchForm({
                     className="minecraft-input"
                 />
             </div>
+
             <div className="input-field">
                 <label>{label}:</label>
                 <select
@@ -32,43 +33,47 @@ export default function SearchForm({
                     className="minecraft-input"
                 >
                     <option value="" disabled>Choose {label.toLowerCase()}…</option>
-                    { Array.isArray(options)
-                        ? options.map(o => (
-                            <option key={o} value={o}>
-                                {o.replace(/_/g, ' ')}
-                            </option>
-                        ))
-                        : null
-                    }
+                    {Array.isArray(options) && options.map(o => (
+                        <option key={o} value={o}>
+                            {o.replace(/_/g, ' ')}
+                        </option>
+                    ))}
                 </select>
             </div>
+
             <div className="input-field">
                 <label>X coordinate:</label>
                 <input
                     type="number"
                     value={x}
                     onChange={e => setX(e.target.value)}
+                    placeholder="0"
                     className="minecraft-input"
                 />
             </div>
+
             <div className="input-field">
                 <label>Z coordinate:</label>
                 <input
                     type="number"
                     value={z}
                     onChange={e => setZ(e.target.value)}
+                    placeholder="0"
                     className="minecraft-input"
                 />
             </div>
+
             <div className="input-field">
                 <label>Radius (blocks):</label>
                 <input
                     type="number"
                     value={radius}
                     onChange={e => setRadius(e.target.value)}
+                    placeholder="1500"
                     className="minecraft-input"
                 />
             </div>
+
             <div className="input-field">
                 <label>Count:</label>
                 <input
@@ -78,9 +83,11 @@ export default function SearchForm({
                     className="minecraft-input"
                 />
             </div>
+
             <button
                 onClick={onGenerate}
-                disabled={!seed || !option || !x || !z || !radius || disabled}
+                // dejamos sólo seed y opción como obligatorios
+                disabled={!seed || !option || disabled}
                 className="minecraft-button"
             >
                 Find {label}
@@ -88,4 +95,3 @@ export default function SearchForm({
         </div>
     );
 }
-

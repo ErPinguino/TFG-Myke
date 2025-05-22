@@ -1,4 +1,3 @@
-// src/Components/StructureSearch/StructureSearch.jsx
 import React, { useState, useEffect, useContext } from 'react';
 import SearchForm        from '../SearchForm/SearchForm';
 import CoordinatesList   from '../CoordinatesList/CoordinatesList';
@@ -39,21 +38,29 @@ export default function StructureSearch() {
   }, []);
 
   const handleGenerate = async () => {
-    if (!seed || !structureName || !x || !z || !radius) {
-      setError('Introduce seed, estructura, coordenadas X/Z y radio');
+    // ahora sólo validamos seed y estructura
+    if (!seed || !structureName) {
+      setError('Introduce seed y estructura');
       return;
     }
+
     setError(null);
     setSearchLoading(true);
     try {
+      // aplica defaults si están vacíos
+      const xi     = x      !== '' ? Number(x)      : 0;
+      const zi     = z      !== '' ? Number(z)      : 0;
+      const r      = radius !== '' ? Number(radius) : 1500;
+
       const input = {
         seed: seed.trim(),
         structureName,
-        x: Number(x),
-        z: Number(z),
-        radius: Number(radius),
+        x: xi,
+        z: zi,
+        radius: r,
         count: Number(count),
       };
+
       const res = await structureService.findStructures(input);
       if (res.found) {
         setCoordinates(res.coordinates);
@@ -135,7 +142,6 @@ export default function StructureSearch() {
                   className="seed-item"
                   onClick={() => setSeed(s.seed_value)}
               >
-                { /* Si s.name existe y no es cadena vacía lo mostramos, si no, s.seed_value */ }
                 {s.name && s.name.trim() !== '' ? s.name : s.seed_value}
               </span>
                     <button

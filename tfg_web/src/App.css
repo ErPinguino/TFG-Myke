@@ -1,7 +1,7 @@
 /* src/App.css */
 .App {
   position: relative;
-  overflow: hidden;
+  overflow: visible;       /* ← de hidden a visible */
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -10,13 +10,19 @@
   background: transparent;
 }
 
-.App > *:not(.background-video) {
-  width: 100%;
-  max-width: 1800px;
+/* TODOS los hijos directos excepto el vídeo y el botón: encima del vídeo */
+.App > *:not(.background-video):not(.mute-toggle-btn) {
+  position: relative;  /* necesario para que z-index funcione */
   z-index: 1;
 }
 
+/* Sólo el contenedor principal recibe además anchura y max-width */
+.App > .minecraft-container {
+  width: 100%;
+  max-width: 1800px;
+}
 
+/* Vídeo detrás de TODO */
 .background-video {
   position: fixed;
   top: 0;
@@ -24,5 +30,24 @@
   width: 100vw;
   height: 100vh;
   object-fit: cover;
-  z-index: 0;   /* el vídeo detrás de todo */
+  z-index: 0;
+}
+
+/* Botón de mute/unmute por encima de todo */
+.mute-toggle-btn {
+  position: fixed;      /* fijado al viewport */
+  bottom: 1rem;         /* distancia desde abajo */
+  right: 1rem;          /* distancia desde la derecha */
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  z-index: 999;         /* bien por encima de todo */
+  border-radius: 4px;
+}
+
+.mute-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
 }
