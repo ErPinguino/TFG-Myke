@@ -8,83 +8,82 @@ class SeedInPutDTOTest {
 
     @Test
     void getSeed_value() {
-        SeedInPutDTO dto = new SeedInPutDTO();
-        dto.setSeed_value("inputValue");
-        assertEquals("inputValue", dto.getSeed_value());
+        // Given
+        SeedInPutDTO dto = new SeedInPutDTO("inputValue", "inputName");
+        // When
+        String actual = dto.getSeed_value();
+        // Then
+        assertEquals("inputValue", actual);
     }
 
     @Test
     void getName() {
-        SeedInPutDTO dto = new SeedInPutDTO();
-        dto.setName("inputName");
-        assertEquals("inputName", dto.getName());
+        // Given
+        SeedInPutDTO dto = new SeedInPutDTO("inputValue", "inputName");
+        // When
+        String actual = dto.getName();
+        // Then
+        assertEquals("inputName", actual);
     }
 
     @Test
     void setSeed_value() {
-        SeedInPutDTO dto = new SeedInPutDTO();
-        dto.setSeed_value("anotherValue");
-        assertEquals("anotherValue", dto.getSeed_value());
+        // Given
+        SeedInPutDTO dto = new SeedInPutDTO("initialValue", "initialName");
+        // When
+        dto.setSeed_value("updatedValue");
+        // Then
+        assertEquals("updatedValue", dto.getSeed_value());
     }
 
     @Test
     void setName() {
-        SeedInPutDTO dto = new SeedInPutDTO();
-        dto.setName("anotherName");
-        assertEquals("anotherName", dto.getName());
+        // Given
+        SeedInPutDTO dto = new SeedInPutDTO("initialValue", "initialName");
+        // When
+        dto.setName("updatedName");
+        // Then
+        assertEquals("updatedName", dto.getName());
     }
 
     @Test
     void testEquals() {
-        SeedInPutDTO a = SeedInPutDTO.builder()
-                .seed_value("v")
-                .name("n")
-                .build();
-        SeedInPutDTO b = SeedInPutDTO.builder()
-                .seed_value("v")
-                .name("n")
-                .build();
-
+        // Given
+        SeedInPutDTO a = new SeedInPutDTO("v", "n");
+        SeedInPutDTO b = new SeedInPutDTO("v", "n");
+        // When / Then
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
-
-        // reflexive, null and different type
-        assertTrue(a.equals(a));
-        assertFalse(a.equals(null));
-        assertFalse(a.equals("notADTO"));
+        assertTrue(a.equals(a));            // reflexive
+        assertFalse(a.equals(null));        // null
+        assertFalse(a.equals("otherType")); // different type
     }
 
     @Test
     void canEqual() {
-        SeedInPutDTO dto = SeedInPutDTO.builder()
-                .seed_value("x")
-                .name("y")
-                .build();
-        assertTrue(dto.canEqual(SeedInPutDTO.builder().seed_value("x").name("y").build()));
+        // Given
+        SeedInPutDTO dto = new SeedInPutDTO("x", "y");
+        // When / Then
+        assertTrue(dto.canEqual(new SeedInPutDTO("x", "y")));
         assertFalse(dto.canEqual("someString"));
     }
 
     @Test
     void testHashCode() {
-        SeedInPutDTO x = SeedInPutDTO.builder()
-                .seed_value("same")
-                .name("sameName")
-                .build();
-        SeedInPutDTO y = SeedInPutDTO.builder()
-                .seed_value("same")
-                .name("sameName")
-                .build();
-
+        // Given
+        SeedInPutDTO x = new SeedInPutDTO("same", "sameName");
+        SeedInPutDTO y = new SeedInPutDTO("same", "sameName");
+        // When / Then
         assertEquals(x.hashCode(), y.hashCode());
     }
 
     @Test
     void testToString() {
-        SeedInPutDTO dto = SeedInPutDTO.builder()
-                .seed_value("val")
-                .name("nm")
-                .build();
+        // Given
+        SeedInPutDTO dto = new SeedInPutDTO("val", "nm");
+        // When
         String s = dto.toString();
+        // Then
         assertTrue(s.contains("SeedInPutDTO"));
         assertTrue(s.contains("seed_value=val"));
         assertTrue(s.contains("name=nm"));
@@ -92,11 +91,12 @@ class SeedInPutDTOTest {
 
     @Test
     void builder() {
+        // Given / When
         SeedInPutDTO dto = SeedInPutDTO.builder()
                 .seed_value("bv")
                 .name("bn")
                 .build();
-
+        // Then
         assertAll("builder",
                 () -> assertEquals("bv", dto.getSeed_value()),
                 () -> assertEquals("bn", dto.getName())
