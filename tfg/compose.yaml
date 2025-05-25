@@ -14,115 +14,24 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
-    build:
-      context: .
-    container_name: tfg_backend
-    depends_on:
-      - postgres
-    ports:
-      - "8081:8081"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./compose.yaml:/host/compose.yaml:ro
-      - ./:/host:ro
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minecraft_project
-      SPRING_DATASOURCE_USERNAME: pingu
-      SPRING_DATASOURCE_PASSWORD: miausita25
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: "true"
+      build:
+        context: .
+      container_name: tfg_backend
+      depends_on:
+        - postgres
+      ports:
+        - "8081:8081"
+      environment:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minecraft_project
+        SPRING_DATASOURCE_USERNAME: pingu
+        SPRING_DATASOURCE_PASSWORD: miausita25
+        SPRING_JPA_HIBERNATE_DDL_AUTO: update
+        SPRING_JPA_SHOW_SQL: "true"
+      command: mvn spring-boot:run
 
-  minecraft:
-    image: itzg/minecraft-server:latest
-    container_name: mc-server
-    depends_on:
-      - backend
-    environment:
-      TYPE: "PAPER"
-      VERSION: "1.21"
-      EULA: "TRUE"
-      ENABLE_RCON: "true"
-      RCON_PORT: "25575"
-      RCON_PASSWORD: "cambiame123"
-      ONLINE_MODE: "false"
-      SEED: "${SEED:-0}"
-    ports:
-      - "25565:25565"
-      - "25575:25575"
-    volumes:
-      - mc-data:/data
-      - ../docker/minecraft/plugins:/plugins:ro
-      - ./docker/minecraft/config/server.properties:/config/server.properties:ro
-      - ./:/host:ro
-    networks:
-      - backend-net
-
-  chunky-pregen:
-    image: debian:bookworm-slim
-    container_name: pregen
-    depends_on:
-      - minecraft
-    networks:
-      - backend-net
-    volumes:
-      - mc-data:/data
-    entrypoint: [ "/bin/bash", "-c" ]
-    command:
-    - |
-      set -ex
-      echo "⏳ Descargando mcrcon…"
-      apt-get update -qq
-      apt-get install -y wget ca-certificates
-      wget -qO /tmp/mcrcon.tar.gz \
-        https://github.com/Tiiffi/mcrcon/releases/download/v0.7.2/mcrcon-0.7.2-linux-x86-64.tar.gz
-      tar -xzf /tmp/mcrcon.tar.gz -C /tmp
-      mv /tmp/mcrcon /usr/local/bin/mcrcon
-      chmod +x /usr/local/bin/mcrcon
-      echo "⏳ Esperando a que RCON esté listo…"
-      until mcrcon -H localhost -P 25575 -p "cambiame123" list >/dev/null 2>&1; do
-        printf "."
-        sleep 5
-      done
-      echo -e "\n✅ RCON listo."
-      echo "▶️ Preregenerando chunks (radio 2000)…"
-      mcrcon -H localhost -P 25575 -p "cambiame123" "chunky radius 2000"
-      mcrcon -H localhost -P 25575 -p "cambiame123" "chunky start"
-      echo "✅ Chunky preregeneración iniciada."
-      tail -f /dev/null
-    profiles:
-      - pregen
-
-  bluemap:
-    image: openjdk:21-slim
-    container_name: bluemap
-    depends_on:
-      - minecraft
-    working_dir: /bluemap
-    ports:
-      - "8090:8100"
-    volumes:
-      - mc-data:/world:ro
-      - ../docker/bluemap/config:/bluemap/config:ro
-      - ../docker/bluemap/bluemap-5.7-cli.jar:/bluemap/bluemap-5.7-cli.jar:ro
-      - bluemap-output:/bluemap/output
-      - bluemap-data:/bluemap/data
-    command:
-      - java
-      - -jar
-      - /bluemap/bluemap-5.7-cli.jar
-      - -c
-      - /bluemap
-      - -g
-      - -b
-      - -w
 
 
 volumes:
   postgres_data:
-  mc-data:
-  bluemap-output:
-  bluemap-data:
 
-networks:
-  backend-net:
-    driver: bridge
+
