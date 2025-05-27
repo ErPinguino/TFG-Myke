@@ -41,31 +41,37 @@ jobs:
           cd tfg_web
           npm ci
           npm run build
-      
-      - name: Test SSH connectivity
+
+      # ————————————————————————————————
+      # Configurar clave SSH para el runner
+      - name: Set up SSH key
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} 'echo SSH OK'
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
+      # Paso de test con verbose para ver el motivo de fallo si lo hubiera
+      - name: Test SSH connectivity (verbose)
+        run: |
+          ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} 'echo SSH OK'
 
+      # Copiar artefactos con scp manual
       - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: "compose.yaml,tfg_web/nginx.conf,tfg_web/dist,tfg/target"
-          target: ~/tfg/TFG-Myke
+        run: |
+          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r \
+            compose.yaml \
+            tfg_web/nginx.conf \
+            tfg_web/dist \
+            tfg/target/tfg-0.0.1-SNAPSHOT.jar \
+            ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke
 
-      - name: SSH and deploy
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          script: |
+      # Desplegar en remoto vía SSH manual
+      - name: Deploy on server
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/tfg/TFG-Myke
             docker compose down
             docker compose build
             docker compose up -d
+          EOF
