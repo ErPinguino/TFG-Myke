@@ -54,7 +54,7 @@ jobs:
             nginx/nginx.conf
             certbot/conf
             certbot/www
-            frontend/dist
+            tfg_web/dist
           target: ~/tfg/TFG-Myke
 
       - name: SSH and deploy
