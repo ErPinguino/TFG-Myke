@@ -12,6 +12,8 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - minecraft_network
 
   backend:
       build:
@@ -28,10 +30,15 @@ services:
         SPRING_JPA_HIBERNATE_DDL_AUTO: update
         SPRING_JPA_SHOW_SQL: "true"
       command: mvn spring-boot:run
-
+      networks:
+        - minecraft_network
 
 
 volumes:
   postgres_data:
+
+networks:
+  minecraft_network:
+    name: minecraft_network
 
 
