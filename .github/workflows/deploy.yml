@@ -47,15 +47,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} 'echo SSH OK'
 
 
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          source: "compose.yaml,tfg_web/nginx.conf,tfg_web/dist,tfg/target"
-          target: ~/tfg/TFG-Myke
+    
 
       - name: SSH and deploy
         uses: appleboy/ssh-action@v0.1.7
