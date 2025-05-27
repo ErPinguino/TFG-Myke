@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: pingu
+      POSTGRES_PASSWORD: miausita25
+      POSTGRES_DB: minecraft_project
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - minecraft_network
+
+  backend:
+    build:
+      context: ./tfg  # Ajusta esta ruta a la ubicación real de tu backend
+    container_name: tfg_backend
+    depends_on:
+      - postgres
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/minecraft_project
+      SPRING_DATASOURCE_USERNAME: pingu
+      SPRING_DATASOURCE_PASSWORD: miausita25
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    command: mvn spring-boot:run
+    networks:
+      - minecraft_network
+
+  frontend:
+    build:
+      context: ./tfg_web  # Ajusta esta ruta a la ubicación real de tu frontend
+    container_name: tfg_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - minecraft_network
+
+volumes:
+  postgres_data:
+
+networks:
+  minecraft_network:
+    name: minecraft_network
