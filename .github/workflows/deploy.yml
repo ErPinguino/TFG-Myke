@@ -42,12 +42,6 @@ jobs:
           npm ci
           npm run build
       
-      - name: List workspace contents
-        run: |
-          echo "=== ROOT ==="
-          ls -1
-          echo "=== RECURSIVE ==="
-          ls -R .
 
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.1
@@ -57,11 +51,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           source: |
-            docker-compose.yml
-            nginx/nginx.conf
-            certbot/conf
-            certbot/www
+            compose.yaml
+            tfg_web/nginx.conf
             tfg_web/dist
+            tfg/target/*.jar
           target: ~/tfg/TFG-Myke
 
       - name: SSH and deploy
