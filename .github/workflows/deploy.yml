@@ -50,11 +50,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          source: |
-            compose.yaml
-            tfg_web/nginx.conf
-            tfg_web/dist
-            tfg/target/tfg-0.0.1-SNAPSHOT.jar
+          source: "compose.yaml,tfg_web/nginx.conf,tfg_web/dist,tfg/target"
           target: ~/tfg/TFG-Myke
 
       - name: SSH and deploy
