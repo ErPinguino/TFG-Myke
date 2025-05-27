@@ -19,6 +19,16 @@ jobs:
         java-version: '21'
     - run: mvn -B -DskipTests clean package -f tfg/pom.xml
 
+    - name: Install local Cubiomes JAR
+    run: |
+      mvn install:install-file \
+        -Dfile=backend/libs/cubiomes-java-0.0.6.jar \
+        -DgroupId=com.rasmusantons \
+        -DartifactId=cubiomes-java \
+        -Dversion=0.0.6 \
+        -Dpackaging=jar
+
+
     - name: Build frontend
       uses: actions/setup-node@v3
       with:
