@@ -54,7 +54,7 @@ jobs:
             compose.yaml
             tfg_web/nginx.conf
             tfg_web/dist
-            tfg/target/*.jar
+            tfg/target
           target: ~/tfg/TFG-Myke
 
       - name: SSH and deploy
