@@ -17,7 +17,7 @@ services:
 
   backend:
     build:
-      context: ./tfg  # Ajusta esta ruta a la ubicación real de tu backend
+      context: ./tfg
     container_name: tfg_backend
     depends_on:
       - postgres
@@ -34,14 +34,21 @@ services:
       - minecraft_network
 
   frontend:
-    build:
-      context: ./tfg_web  # Ajusta esta ruta a la ubicación real de tu frontend
+    image: nginx:stable-alpine
     container_name: tfg_frontend
+    depends_on:
+      - backend
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - backend
+    volumes:
+      # Está­ticos de tu build de Vite/React
+      - ./tfg_web/dist:/usr/share/nginx/html:ro
+      # Tu configuración nginx.conf con bloques HTTP/HTTPS y ACME
+      - ./tfg_web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # Volúmenes para Certbot (certificados y desafíos)
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     networks:
       - minecraft_network
 
@@ -50,4 +57,4 @@ volumes:
 
 networks:
   minecraft_network:
-    name: minecraft_network
+    external: true
