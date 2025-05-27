@@ -2,66 +2,70 @@ name: CI/CD Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Build backend
-      uses: actions/setup-java@v3
-      with:
-        distribution: temurin
-        java-version: '21'
-    - run: mvn -B -DskipTests clean package -f tfg/pom.xml
+      - name: Install local Cubiomes JAR
+        run: |
+          mvn install:install-file \
+            -Dfile=tfg/libs/cubiomes-java-0.0.6.jar \
+            -DgroupId=com.rasmusantons \
+            -DartifactId=cubiomes-java \
+            -Dversion=0.0.6 \
+            -Dpackaging=jar
 
-    - name: Install local Cubiomes JAR
-    run: |
-      mvn install:install-file \
-        -Dfile=backend/libs/cubiomes-java-0.0.6.jar \
-        -DgroupId=com.rasmusantons \
-        -DartifactId=cubiomes-java \
-        -Dversion=0.0.6 \
-        -Dpackaging=jar
+      - name: Set up Java 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '21'
 
+      - name: Build backend
+        run: mvn -B -DskipTests clean package -f tfg/pom.xml
 
-    - name: Build frontend
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    - run: |
-        cd tfg_web
-        npm ci
-        npm run build
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Copy files to server
-      uses: appleboy/scp-action@v0.1.1
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: 22
-        source: |
-          docker-compose.yml
-          nginx/nginx.conf
-          certbot/conf
-          certbot/www
-          frontend/dist
-        target: ~/tfg/TFG-Myke
+      - name: Build frontend
+        run: |
+          cd tfg_web
+          npm ci
+          npm run build
 
-    - name: SSH and deploy
-      uses: appleboy/ssh-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        port: 22
-        script: |
-          cd ~/tfg/TFG-Myke
-          docker compose down
-          docker compose build
-          docker compose up -d
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          source: |
+            docker-compose.yml
+            nginx/nginx.conf
+            certbot/conf
+            certbot/www
+            frontend/dist
+          target: ~/tfg/TFG-Myke
+
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/tfg/TFG-Myke
+            docker compose down
+            docker compose build
+            docker compose up -d
