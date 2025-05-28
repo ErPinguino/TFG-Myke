@@ -8,8 +8,12 @@
 html, body {
   width: 100%;
   min-height: 100vh;
-  /* repite el oak_planks.png que tienes en public/ */
-  background: url('/public/wallpaper.jpg') repeat;
+  /* ❌ QUITA ESTA LÍNEA QUE ESTÁ CAUSANDO EL PROBLEMA */
+  /* background: url('https://tfgmykebucket.s3.eu-west-3.amazonaws.com/minecraft-video.mp4') repeat; */
+  
+  /* ✅ DÉJALO TRANSPARENTE para que se vea el video */
+  background: transparent;
+  
   image-rendering: pixelated;
   font-family: 'Press Start 2P', cursive;
   overflow-x: hidden;
@@ -18,4 +22,5 @@ html, body {
 #root {
   width: 100%;
   min-height: 100vh;
+  background: transparent; /* ✅ También transparente */
 }
