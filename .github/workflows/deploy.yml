@@ -76,9 +76,11 @@ jobs:
 
             docker compose -f compose.yaml down
 
-            docker compose -f compose.yaml build
+            docker compose -f compose.yaml build backend
 
-            docker compose -f compose.yaml up -d
+            docker compose -f compose.yaml build frontend
+
+            docker compose -f compose.yaml up -d backend frontend
 
             exit
           EOF
