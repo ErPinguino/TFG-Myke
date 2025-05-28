@@ -74,8 +74,6 @@ jobs:
 
             cd ~/tfg/TFG-Myke
 
-            git pull origin main
-
             docker compose -f compose.yaml down
 
             docker compose -f compose.yaml build
