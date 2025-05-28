@@ -61,7 +61,7 @@ jobs:
         run: |
           scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r \
             compose.yaml \
-            tfg_web/nginx.conf \
+            tfg_web/default.conf \
             tfg_web/dist \
             tfg/target/tfg-0.0.1-SNAPSHOT.jar \
             ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke
