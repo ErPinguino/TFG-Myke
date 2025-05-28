@@ -33,7 +33,7 @@ services:
     networks:
       - minecraft_network
 
-  frontend:
+   frontend:
     image: nginx:stable-alpine
     container_name: tfg_frontend
     depends_on:
@@ -42,17 +42,15 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-    # Monta TODOS los conf (*.conf) de nginx:
-    - ./tfg_web:/etc/nginx/conf.d:ro
+      # 1) Monta tu default.conf con los dos bloques (80 y 443)
+      - ./tfg_web/default.conf:/etc/nginx/conf.d/default.conf:ro
 
-    # Está­ticos
-    - ./tfg_web/dist:/usr/share/nginx/html:ro
+      # 2) Monta los ficheros estáticos de tu SPA
+      - ./tfg_web/dist:/usr/share/nginx/html:ro
 
-    - ./tfg_web/default.conf:/etc/nginx/conf.d/default.conf:ro
-
-    # Certificados ACME
-    - ./certbot/conf:/etc/letsencrypt:ro
-    - ./certbot/www:/var/www/certbot:ro
+      # 3) Certificados y retos ACME
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
 
     networks:
       - minecraft_network
