@@ -33,7 +33,7 @@ services:
     networks:
       - minecraft_network
 
-   frontend:
+  frontend:
     image: nginx:stable-alpine
     container_name: tfg_frontend
     depends_on:
