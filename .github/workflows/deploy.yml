@@ -1,18 +1,15 @@
 name: CI/CD Deploy
-
 on:
   push:
     branches:
       - main
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Install local Cubiomes JAR
         run: |
           mvn install:install-file \
@@ -21,68 +18,126 @@ jobs:
             -DartifactId=cubiomes-java \
             -Dversion=0.0.6 \
             -Dpackaging=jar
-
+      
       - name: Set up Java 21
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: '21'
-
+      
       - name: Build backend
         run: mvn -B -DskipTests clean package -f tfg/pom.xml
-
+      
       - name: Set up Node.js 18
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
+      
       - name: Build frontend
         run: |
           cd tfg_web
           npm ci
           npm run build
-
-      # ————————————————————————————————
+      
+      # Verificar que los archivos estén correctamente construidos
+      - name: Verify build artifacts
+        run: |
+          echo "=== Backend JAR ==="
+          ls -la tfg/target/tfg-0.0.1-SNAPSHOT.jar
+          echo "=== Frontend dist ==="
+          ls -la tfg_web/dist/
+          echo "=== Nginx config ==="
+          ls -la tfg_web/default.conf
+      
       # Configurar clave SSH para el runner
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
+      
       # Paso de test con verbose para ver el motivo de fallo si lo hubiera
       - name: Test SSH connectivity (verbose)
         run: |
           ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
             ubuntu@${{ secrets.EC2_HOST }} 'echo SSH OK'
-
+      
+      # Preparar estructura de directorios en el servidor
+      - name: Prepare server directories
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} '
+            mkdir -p ~/tfg/TFG-Myke/nginx
+            mkdir -p ~/tfg/TFG-Myke/dist
+            echo "Directories prepared"
+          '
+      
       # Copiar artefactos con scp manual
       - name: Copy files to server
         run: |
-          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r \
+          # Copiar archivo docker-compose
+          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
             compose.yaml \
+            ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke/
+          
+          # Copiar configuración de nginx a la carpeta correcta
+          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
             tfg_web/default.conf \
-            tfg_web/dist \
+            ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke/nginx/
+          
+          # Copiar JAR del backend
+          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
             tfg/target/tfg-0.0.1-SNAPSHOT.jar \
-            ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke
-
+            ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke/
+          
+          # Copiar frontend dist completo (incluyendo videos)
+          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r \
+            tfg_web/dist/* \
+            ubuntu@${{ secrets.EC2_HOST }}:~/tfg/TFG-Myke/dist/
+      
+      # Verificar que los archivos se copiaron correctamente
+      - name: Verify files on server
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} '
+            echo "=== Server file structure ==="
+            ls -la ~/tfg/TFG-Myke/
+            echo "=== Nginx config ==="
+            ls -la ~/tfg/TFG-Myke/nginx/
+            echo "=== Frontend dist ==="
+            ls -la ~/tfg/TFG-Myke/dist/
+          '
+      
       # Desplegar en remoto vía SSH manual
       - name: Deploy on server
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/tfg/TFG-Myke || { echo "Error: Cannot change directory"; exit 1; }
             echo "Directory changed successfully"
-            
+           
+            # Parar containers existentes
             docker compose -f compose.yaml down || { echo "Error: Cannot stop containers"; exit 1; }
             echo "Containers stopped successfully"
-            
-            docker compose -f compose.yaml build backend || { echo "Error: Cannot build backend"; exit 1; }
+           
+            # Limpiar imágenes antiguas para forzar rebuild
+            docker compose -f compose.yaml build --no-cache backend || { echo "Error: Cannot build backend"; exit 1; }
             echo "Backend built successfully"
-            
-            docker compose -f compose.yaml build frontend || { echo "Error: Cannot build frontend"; exit 1; }
+           
+            docker compose -f compose.yaml build --no-cache frontend || { echo "Error: Cannot build frontend"; exit 1; }
             echo "Frontend built successfully"
-            
+           
+            # Iniciar containers
             docker compose -f compose.yaml up -d backend frontend || { echo "Error: Cannot start containers"; exit 1; }
             echo "Containers started successfully"
+            
+            # Verificar que los containers estén corriendo
+            echo "=== Container status ==="
+            docker compose -f compose.yaml ps
+            
+            # Verificar logs si hay problemas
+            echo "=== Frontend logs (last 10 lines) ==="
+            docker compose -f compose.yaml logs --tail=10 frontend || echo "No frontend logs"
+            
+            echo "=== Backend logs (last 10 lines) ==="
+            docker compose -f compose.yaml logs --tail=10 backend || echo "No backend logs"
           EOF
-
