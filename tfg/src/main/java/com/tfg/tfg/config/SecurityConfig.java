@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedOriginPatterns(List.of("https://localhost:5175", "http://localhost:5175","https://localhost:5176", "http://localhost:5176", "https://localhost:3000", "http://localhost:3000", "http://13.39.149.35:3000", "https://13.39.149.35:3000", "https://tfgmyke.duckdns.org", "http://tfgmyke.duckdns.org"));
+        cfg.setAllowedOriginPatterns(List.of("https://localhost:5175", "http://localhost:5175","https://localhost:5176", "http://localhost:5176", "https://localhost:3000", "http://localhost:3000", "http://13.39.149.35:3000", "https://13.39.149.35:3000", "https://tfgmyke.duckdns.org/", "http://tfgmyke.duckdns.org/"));
         cfg.setAllowedMethods(List.of("GET", "POST", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
         cfg.setAllowCredentials(true);
