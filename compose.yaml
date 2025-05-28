@@ -42,15 +42,17 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # 1) Monta tu default.conf con los dos bloques (80 y 443)
+      # 1) Configuración de Nginx (HTTP y HTTPS)
       - ./tfg_web/default.conf:/etc/nginx/conf.d/default.conf:ro
 
-      # 2) Monta los ficheros estáticos de tu SPA
+      # 2) Archivos estáticos de tu SPA
       - ./tfg_web/dist:/usr/share/nginx/html:ro
 
-      # 3) Certificados y retos ACME
-      #- ./certbot/conf:/etc/letsencrypt:ro
-      #- ./certbot/www:/var/www/certbot:ro
+      # 3) Certificados y snippets SSL completos de Certbot
+      - ./certbot/etc:/etc/letsencrypt:ro
+
+      # 4) Retos ACME para renovación
+      - ./certbot/www:/var/www/certbot:ro
 
     networks:
       - minecraft_network
