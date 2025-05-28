@@ -42,13 +42,18 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # Está­ticos de tu build de Vite/React
+      # 1) Monta tu build estático de Vite/React
       - ./tfg_web/dist:/usr/share/nginx/html:ro
-      # Tu configuración nginx.conf con bloques HTTP/HTTPS y ACME
+
+      # 2) Monta tu nginx.conf personalizado como default.conf
       - ./tfg_web/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      # Volúmenes para Certbot (certificados y desafíos)
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+
+      # 3) Monta los certificados emitidos por Certbot (solo lectura)
+      - ./certbot/conf:/etc/letsencrypt:ro
+
+      # 4) Monta la carpeta webroot para renovación ACME (solo lectura)
+      - ./certbot/www:/var/www/certbot:ro
+
     networks:
       - minecraft_network
 
