@@ -70,18 +70,19 @@ jobs:
       - name: Deploy on server
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-            set -e
-
-            cd ~/tfg/TFG-Myke
-
-            docker compose -f compose.yaml down
-
-            docker compose -f compose.yaml build backend
-
-            docker compose -f compose.yaml build frontend
-
-            docker compose -f compose.yaml up -d backend frontend
-
-            exit
+            cd ~/tfg/TFG-Myke || { echo "Error: Cannot change directory"; exit 1; }
+            echo "Directory changed successfully"
+            
+            docker compose -f compose.yaml down || { echo "Error: Cannot stop containers"; exit 1; }
+            echo "Containers stopped successfully"
+            
+            docker compose -f compose.yaml build backend || { echo "Error: Cannot build backend"; exit 1; }
+            echo "Backend built successfully"
+            
+            docker compose -f compose.yaml build frontend || { echo "Error: Cannot build frontend"; exit 1; }
+            echo "Frontend built successfully"
+            
+            docker compose -f compose.yaml up -d backend frontend || { echo "Error: Cannot start containers"; exit 1; }
+            echo "Containers started successfully"
           EOF
 
