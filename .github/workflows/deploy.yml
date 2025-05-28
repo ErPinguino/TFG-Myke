@@ -2,8 +2,7 @@ name: CI/CD Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -11,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Bajar el código
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instalar el JAR local (Cubiomes)
+      # 2. Install local Cubiomes JAR
       - name: Install local Cubiomes JAR
         run: |
           mvn install:install-file \
@@ -25,47 +24,52 @@ jobs:
             -Dversion=0.0.6 \
             -Dpackaging=jar
 
-      # 3. Build backend (opcional, para cachear en runner)
+      # ───────────────────────────────────────────────────────────
+      # ←←← Insertamos SETUP-JAVA antes de cualquier mvn compile!  →→→
+      # 3. Set up Java 21 (Temurin)
+      - name: Set up Java 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # 4. Build backend
       - name: Build backend
         run: mvn -B -DskipTests clean package -f tfg/pom.xml
 
-      # 4. Build frontend
+      # 5. Build frontend
       - name: Build frontend
         run: |
           cd tfg_web
           npm ci
           npm run build
 
-      # 5. Configurar clave SSH
+      # 6. Set up SSH key
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      # 6. (Opcional) Test SSH connectivity
+      # 7. (Optional) Test SSH connectivity
       - name: Test SSH connectivity
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} "echo SSH OK"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
+            ubuntu@${{ secrets.EC2_HOST }} "echo SSH OK"
 
-      # 7. Deploy en remoto usando git pull
+      # 8. Deploy on EC2 via Git pull
       - name: Deploy on EC2 via SSH
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             set -e
-
-            # 7.1. Accede al directorio de tu proyecto
             cd ~/tfg/TFG-Myke
-
-            # 7.2. Actualiza código desde Git
             git pull origin main
 
-            # 7.3. Reconstruye el JAR del backend y genera el build del front
+            # Rebuild on the server
             mvn -B -DskipTests clean package -f tfg/pom.xml
             cd tfg_web && npm ci && npm run build
             cd ..
 
-            # 7.4. Levanta contenedores Docker
             docker compose down
             docker compose up -d --build
           EOF
