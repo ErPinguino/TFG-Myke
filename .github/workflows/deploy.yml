@@ -87,5 +87,5 @@ jobs:
           docker compose -f compose.yaml up -d
 
           exit
-        EOF
+         EOF
 
