@@ -42,7 +42,7 @@ function AppContent() {
                     <video
                         ref={videoRef}
                         className="background-video"
-                        src="/minecraft-video.mp4"
+                        src="minecraft-video.mp4"
                         muted={isMuted}
                         autoPlay
                         loop
