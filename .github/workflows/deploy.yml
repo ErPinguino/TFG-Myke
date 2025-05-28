@@ -70,11 +70,22 @@ jobs:
       - name: Deploy on server
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-            cd ~/tfg/TFG-Myke
+          set -e
 
-            docker compose -f compose.yaml down
+          cd ~/tfg/TFG-Myke
 
-            docker compose -f compose.yaml build
+          # Trae los últimos cambios (incluido default.conf y compose.yaml renombrado)
+          git pull origin main
 
-            docker compose -f compose.yaml up -d
-          EOF
+          # Baja los servicios usando explicitamente compose.yaml
+          docker compose -f compose.yaml down
+
+          # (Re)construye las imágenes
+          docker compose -f compose.yaml build
+
+          # Sube los contenedores en background
+          docker compose -f compose.yaml up -d
+
+          exit
+        EOF
+
