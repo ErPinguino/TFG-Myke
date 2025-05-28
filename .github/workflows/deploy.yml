@@ -71,7 +71,10 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/tfg/TFG-Myke
-            docker compose down
-            docker compose build
-            docker compose up -d
+
+            docker compose -f compose.yaml down
+
+            docker compose -f compose.yaml build
+
+            docker compose -f compose.yaml up -d
           EOF
